@@ -3,7 +3,7 @@
         <div v-if="view === 0" class="app__view">
                 <label for="email" class="flex-column">
                     Email
-                    <input type="email" v-model="email" onchange="error.value = ''" class="form__input-text">
+                    <input type="email" v-model="email" class="form__input-text">
                     <span style="color:red;">{{ error }}</span>
                 </label>
                 <label for="consent">
@@ -20,6 +20,7 @@
         </div>
         <div v-else-if="view === 2">
             {{response}}
+        <!-- Prezentacja produktu -->
         </div>
         <div v-else>
             <h2>Wystąpił błąd</h2>

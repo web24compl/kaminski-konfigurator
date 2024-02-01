@@ -1,0 +1,7 @@
+{
+    "novaSettings.navigationItemTitle": "Ustawienia nawigacji",
+    "novaSettings.saveButtonText": "Zapisz ustawienia",
+    "novaSettings.noSettingsFieldsText": "Nie zdefiniowano żadnych pól ustawień.",
+    "novaSettings.settingsSuccessToast": "Ustawienia zostały pomyślnie zaktualizowane!",
+    "novaSettings.general": "Ustawienia"
+}

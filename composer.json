@@ -12,6 +12,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "openai-php/laravel": "^0.8.1",
+        "outl1ne/nova-settings": "^5.2",
         "stepanenko3/nova-json": "^4.0"
     },
     "require-dev": {

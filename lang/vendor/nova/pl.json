@@ -485,6 +485,7 @@
     "gptService": "Chat GPT",
     "chatResponse": "Historia odpowiedzi",
     "gptSystemMessages": "Wiadomości systemowe do chatu GPT",
-    "qAndA": "Pytania i odpowiedzi"
-
+    "qAndA": "Pytania i odpowiedzi",
+    "users": "Użytkownicy",
+    "email": "Mail"
 }

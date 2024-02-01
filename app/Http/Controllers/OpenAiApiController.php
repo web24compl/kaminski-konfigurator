@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SalesInformationMail;
 use App\Models\ChatResponse;
 use App\Models\SystemMessage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use OpenAI\Laravel\Facades\OpenAI;
 
 class OpenAiApiController extends Controller
@@ -14,7 +16,11 @@ class OpenAiApiController extends Controller
     {
 
         $email = $request->get('email');
-
+//        $fakeResponse = [
+//            "id" => 3,
+//            "name" => "answer 3.3",
+//            "similar" => []
+//        ];
 //        $wordpressElements = Opisy produktów od nich z wordpressa
         if($request->get('questions') == null || $request->get('answers') == null ||
            $request->get('questions') == [] || $request->get('answers') == [])
@@ -52,6 +58,7 @@ class OpenAiApiController extends Controller
         $chatResponse->mail = $email;
         $chatResponse->save();
 
+        Mail::to('sales@kaminski.pl')->send(new SalesInformationMail($email, $chatResponse->response));
         return response()->json($chatResponse->response, 200);
     }
 

@@ -28,8 +28,6 @@ class ChatResponse extends Resource
      */
     public static $title = 'id';
 
-    public static $label = "Historia odpowiedzi";
-
     /**
      * The columns that should be searched.
      *
@@ -37,8 +35,8 @@ class ChatResponse extends Resource
      */
     public static $search = [
         'id',
-        'input',
-        'response',
+        'tokens',
+        'mail'
     ];
 
     /**
@@ -51,6 +49,7 @@ class ChatResponse extends Resource
     {
         return [
             ID::make()->sortable(),
+            Text::make(__('email'), 'mail')->sortable(),
             Code::make(__('gptInput'), 'input')->json(),
             Code::make(__('gptResponse'), 'response')->json(),
             Number::make(__('tokens'), 'tokens')->sortable(),

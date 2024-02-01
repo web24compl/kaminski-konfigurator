@@ -9,10 +9,12 @@ use App\Nova\SystemMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Dashboards\Main;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use Outl1ne\NovaSettings\NovaSettings;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -24,6 +26,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function boot()
     {
         parent::boot();
+
+        NovaSettings::addSettingsFields([
+            Text::make('Email kontaktowy', 'contact_email'),
+            Text::make('Telefon kontaktowy', 'contact_phone'),
+        ]);
 
         Nova::mainMenu(function (Request $request) {
            return [
@@ -39,7 +46,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                    MenuItem::resource(Question::class)
                ])->collapsable(),
 
+               MenuItem::make(__('novaSettings.navigationItemTitle'), 'nova-settings'),
 
+               MenuItem::resource(\App\Nova\User::class),
            ];
         });
     }
@@ -92,7 +101,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function tools()
     {
-        return [];
+        return [
+            new NovaSettings(),
+        ];
     }
 
     /**

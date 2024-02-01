@@ -13,6 +13,7 @@ class ChatResponse extends Model
         'input',
         'response',
         'tokens',
+        'mail',
     ];
 
     protected $casts = [
