@@ -34,7 +34,8 @@ class SalesInformationMail extends Mailable
                 'name' => $this->name,
                 'id' => $this->id,
             ])
-            ->subject('Informacje o sprzedaży');
+            ->subject('Informacje o sprzedaży')
+            ->from($this->email);
 
     }
 }

@@ -30,6 +30,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         NovaSettings::addSettingsFields([
             Text::make('Email kontaktowy', 'contact_email'),
             Text::make('Telefon kontaktowy', 'contact_phone'),
+            Text::make('Email działu sprzedaży', 'sales_email'),
         ]);
 
         Nova::mainMenu(function (Request $request) {

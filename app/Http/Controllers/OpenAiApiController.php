@@ -58,7 +58,7 @@ class OpenAiApiController extends Controller
         $chatResponse->mail = $email;
         $chatResponse->save();
 
-        Mail::to('sales@kaminski.pl')->send(new SalesInformationMail($email, $chatResponse->response));
+        Mail::to(nova_get_setting('sales_email'))->send(new SalesInformationMail($email, $chatResponse->response));
         return response()->json($chatResponse->response, 200);
     }
 
