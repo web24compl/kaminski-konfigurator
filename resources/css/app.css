@@ -1,0 +1,128 @@
+@import 'question.css';
+@import 'button.css';
+
+:root {
+    --primary-color: #e6bc6b;
+    --secondary-color: #ffffff;
+    --text-color: #8d8d8d;
+    --question-color: #000;
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    color: var(--text-color);
+    margin: 0 auto 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 24px;
+    min-height: 100vh;
+}
+
+#app {
+    margin: 0 100px;
+}
+
+header {
+    padding: 10px;
+    height: 80px;
+    color: var(--text-color);
+    margin-bottom: 50px;
+    border-bottom: 1px solid hsla(0,0%,69%,.3);
+}
+
+.header__image {
+    height: 50px;
+}
+
+footer {
+    width: 100%;
+    color: black;
+    border-top: thin solid #707070;
+    padding: 20px 0;
+}
+
+.footer__head {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    height: 150px;
+}
+
+.footer__head img {
+    height: 100px;
+    max-width: 300px;
+}
+
+.footer__links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: 50px;
+    font-size: 12px;
+}
+
+.footer__links a {
+    text-decoration: none;
+    color: black;
+}
+
+.footer__links a:visited {
+    text-decoration: none;
+    color: black;
+}
+
+.footer__links a:hover {
+    transition: 1s;
+    color: var(--primary-color, #e6bc6b);
+}
+
+
+.footer__info {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-top: thin solid #707070;
+    font-size: 16px;
+    font-weight: 600;
+    gap: 15px;
+    padding-top: 16px;
+    text-transform: uppercase;
+}
+
+.footer__info img {
+    height: 15px;
+    margin-left: 15px;
+    position: relative;
+}
+
+.app__view {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.form__input-text {
+    position: relative;
+    outline: 0;
+    appearance: none;
+    border: 1px solid #E8E8E8;
+    color: #000000;
+    font-family: inherit;
+    font-size: 16px;
+    padding: 18px 15px;
+    resize: none;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
