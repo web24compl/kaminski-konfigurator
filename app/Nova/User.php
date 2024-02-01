@@ -108,4 +108,9 @@ class User extends Resource
     {
         return [];
     }
+
+    public static function label()
+    {
+        return __('users');
+    }
 }

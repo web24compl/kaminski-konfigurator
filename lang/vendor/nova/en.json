@@ -472,5 +472,20 @@
     "Uploading": "Uploading",
     "The image could not be loaded.": "The image could not be loaded.",
     "User Actions": "User Actions",
-    "test": "testowe translate en"
+    "content": "Content",
+    "updated_at": "Updated At",
+    "created_at": "Created At",
+    "question": "Question",
+    "questions": "Questions",
+    "answer": "Answer",
+    "answers": "Answers",
+    "tokens": "Used tokens",
+    "gptInput": "Input to chat GPT",
+    "gptResponse": "Answer from chat GPT",
+    "gptService": "Chat GPT",
+    "chatResponse": "Chat Response",
+    "gptSystemMessages": "System messages to chat GPT",
+    "qAndA": "Questions and answers",
+    "users": "Users",
+    "email": "Mail"
 }
