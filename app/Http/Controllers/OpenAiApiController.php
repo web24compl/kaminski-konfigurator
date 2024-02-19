@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\SalesInformationMail;
 use App\Models\ChatResponse;
+use App\Models\Question;
 use App\Models\SystemMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -12,15 +13,47 @@ use OpenAI\Laravel\Facades\OpenAI;
 class OpenAiApiController extends Controller
 {
 
+    public function show()
+    {
+        $questions = Question::with('answers')->get();
+
+        return view('layouts.app', ['questions' => $questions]);
+    }
+
+    public function validateCaptcha (Request $request)
+    {
+        $token = $request->input('token');
+        if (empty($token)) {
+            return response()->json(['message' => 'Captcha token is required'], 400);
+        }
+        $url = 'https://www.google.com/recaptcha/api/siteverify';
+        $data = [
+            'secret' => config('recaptcha.api_secret_key'),
+            'response' => $token
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $resultJson = json_decode($response);
+
+        if ($resultJson->score > 0.5) {
+            return response()->json($resultJson, 200);
+        } else {
+            return response()->json(['message' => 'Captcha validation failed'], 400);
+        }
+    }
+
     public function index(Request $request)
     {
 
         $email = $request->get('email');
-//        $fakeResponse = [
-//            "id" => 3,
-//            "name" => "answer 3.3",
-//            "similar" => []
-//        ];
+
 //        $wordpressElements = Opisy produktów od nich z wordpressa
         if($request->get('questions') == null || $request->get('answers') == null ||
            $request->get('questions') == [] || $request->get('answers') == [])
@@ -58,7 +91,8 @@ class OpenAiApiController extends Controller
         $chatResponse->mail = $email;
         $chatResponse->save();
 
-        Mail::to(nova_get_setting('sales_email'))->send(new SalesInformationMail($email, $chatResponse->response));
+        Mail::to(nova_get_setting('sales_email'))
+            ->send(new SalesInformationMail($email, $chatResponse->input, $chatResponse->response));
         return response()->json($chatResponse->response, 200);
     }
 

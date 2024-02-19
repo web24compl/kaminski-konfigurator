@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OpenAiApiController;
 /*
@@ -13,8 +14,10 @@ use App\Http\Controllers\OpenAiApiController;
 |
 */
 
-Route::get('/', function () {
-    return view('layouts.app');
-})->name('home');
+Route::get('/', [OpenAiApiController::class, 'show'])->name('home');
+
+Route::post('/recaptcha', [OpenAiApiController::class, 'validateCaptcha']);
 
 Route::post('/ai', [OpenAiApiController::class, 'index']);
+
+Route::post('/export', [ExportController::class, 'exportChatResponses']);

@@ -2,18 +2,10 @@
 
 namespace App\Nova;
 
-use Illuminate\Http\Request;
-use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
-use Laravel\Nova\Fields\HasMany;
-use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Repeater;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Stepanenko3\NovaJson\Fields\JsonArray;
-use Stepanenko3\NovaJson\Fields\JsonRepeatable;
 
 class Question extends Resource
 {
@@ -30,8 +22,6 @@ class Question extends Resource
      * @var string
      */
     public static $title = 'question';
-
-    public static $label = "Pytania";
 
     /**
      * The columns that should be searched.
@@ -55,17 +45,8 @@ class Question extends Resource
     {
         return [
             ID::make()->sortable(),
-
-            Text::make(__('question'),'question')
-                ->sortable()
-                ->rules('required', 'max:255'),
-//            JsonArray::make('answers->answer')
-//                ->rules('required', 'max:255')
-//                ->field(
-//                    Text::make('answer')
-//                        ->rules('required', 'max:255')
-//                ),
-//            HasOne::make('Answers'),
+            Text::make(__('question'),'question')->sortable(),
+            BelongsToMany::make(__('answers'), 'answers', Answer::class),
         ];
     }
 
@@ -116,5 +97,10 @@ class Question extends Resource
     public static function label()
     {
         return __('questions');
+    }
+
+    public static function singularLabel()
+    {
+        return __('question');
     }
 }

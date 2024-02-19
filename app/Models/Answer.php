@@ -13,15 +13,16 @@ class Answer extends Model
 
     protected $fillable = [
         'answer',
-        'parent_question_id',
-        'child_question_id',
+        'question_id'
     ];
 
-    public function parent() {
-        return $this->belongsTo(\App\Models\Question::class, 'id', 'parent_question_id');
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class);
     }
 
-    public function child() {
-        return $this->hasOne(\App\Models\Question::class, 'id', 'child_question_id');
+    public function question()
+    {
+        return $this->belongsTo(Question::class, 'question_id', 'id');
     }
 }

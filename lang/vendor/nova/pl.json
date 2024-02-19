@@ -480,7 +480,7 @@
     "answer": "Odpowiedź",
     "answers": "Odpowiedzi",
     "tokens": "Ilość Użytych Tokenów",
-    "gptInput": "Dane do chatu GPT",
+    "gptInput": "Dane dla chatu GPT",
     "gptResponse": "Odpowiedź od chatu GPT",
     "gptService": "Chat GPT",
     "chatResponse": "Historia odpowiedzi",

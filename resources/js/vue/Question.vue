@@ -10,7 +10,7 @@
                     :value="answer.answer"
                     v-model="selectedAnswer"
                     :name="question.question"
-                    @change="check($event, answer.childQuestionId)"
+                    @change="check($event, answer.question_id)"
                 >
                 <label :for="answer.answer">{{ answer.answer }}</label>
             </div>
@@ -34,10 +34,9 @@
     let selectedAnswerQuestionId = ref(null);
     let selectedAnswer = '';
 
-    // const check = (e, answer, childQuestionId = -1) => {
-    const check = (e, childQuestionId = -1) => {
+    const check = (e, question_id = -1) => {
         checked.value = true;
-        selectedAnswerQuestionId = childQuestionId;
+        selectedAnswerQuestionId = question_id;
     }
 
     const reset = () => {

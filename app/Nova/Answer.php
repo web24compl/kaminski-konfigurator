@@ -4,8 +4,9 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\HasOne;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -44,12 +45,14 @@ class Answer extends Resource
     {
         return [
             ID::make()->sortable(),
-            Text::make('answer')
-                ->sortable()
-                ->rules(['required', 'max:255']),
-            BelongsTo::make('parent_question_id', 'parent', Question::class),
-            HasOne::make('child_question_id', 'child', Question::class)->nullable(),
-        ];
+            Text::make('answer')->sortable(),
+            BelongsTo::make(__('question'), 'question', Question::class)
+                ->searchable()
+                ->withoutTrashed(),
+//            Select::make('question.name', 'question_id')
+//                ->options(\App\Models\Question::all()->pluck('question', 'id')->toArray()),
+            BelongsToMany::make('Questions', 'questions', Question::class),
+            ];
     }
 
     /**
@@ -94,6 +97,11 @@ class Answer extends Resource
     public function actions(NovaRequest $request)
     {
         return [];
+    }
+
+    public function authorizedToReplicate(Request $request)
+    {
+        return false;
     }
 
     public static function label()

@@ -15,16 +15,10 @@ class Question extends Model
 
     protected $fillable = [
         'question',
-        'answers',
     ];
 
-    protected $casts = [
-        'answers' => 'array',
-    ];
-    public function answers() {
-        return $this->belongsToMany(\App\Models\Answer::class, 'answers', 'id');
-    }
-    public function answersMany() {
-        return $this->hasMany(\App\Models\Answer::class, 'answers', 'id');
+    public function answers()
+    {
+        return $this->belongsToMany(Answer::class);
     }
 }

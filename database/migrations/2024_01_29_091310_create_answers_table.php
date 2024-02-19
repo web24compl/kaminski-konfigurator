@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
-            $table->text('answer');
-            $table->integer('parent_question_id');
-            $table->integer('child_question_id')->nullable();
+            $table->string('answer');
+            $table->unsignedBigInteger('question_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

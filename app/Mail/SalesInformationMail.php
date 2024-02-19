@@ -2,12 +2,11 @@
 
 namespace App\Mail;
 
+use App\Exports\ExportFilteredResponse;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SalesInformationMail extends Mailable
 {
@@ -16,7 +15,7 @@ class SalesInformationMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(protected string $email, protected $gptResponse)
+    public function __construct(protected string $email, protected $input, protected $gptResponse)
     {
         //
         $this->name = $this->gptResponse['name'];
@@ -35,7 +34,7 @@ class SalesInformationMail extends Mailable
                 'id' => $this->id,
             ])
             ->subject('Informacje o sprzedaży')
+            ->attach(Excel::download(new ExportFilteredResponse($this->input, $this->email, $this->gptResponse),'input.csv')->getFile(), ['as' => 'list.csv'])
             ->from($this->email);
-
     }
 }

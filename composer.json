@@ -2,18 +2,26 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "biscolab/laravel-recaptcha": "^6.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/nova": "^4.0",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "maatwebsite/laravel-nova-excel": "^1.3",
         "openai-php/laravel": "^0.8.1",
         "outl1ne/nova-settings": "^5.2",
-        "stepanenko3/nova-json": "^4.0"
+        "psr/simple-cache": "^2.0",
+        "stepanenko3/nova-json": "^4.0",
+        "web24/export": "@dev",
+        "ext-zip": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -71,6 +79,10 @@
         "nova": {
             "type": "composer",
             "url": "https://nova.laravel.com"
+        },
+        "0": {
+            "type": "path",
+            "url": "./nova-components/Export"
         }
     },
     "http-basic": {

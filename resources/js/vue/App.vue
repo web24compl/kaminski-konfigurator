@@ -1,6 +1,9 @@
 <template>
     <div>
-        <div v-if="view === 0" class="app__view">
+        <div v-if="failedCaptcha">
+            <h2>Spróbuj ponownie za jakiś czas.</h2>
+        </div>
+        <div v-else-if="view === 0" class="app__view">
                 <label for="email" class="flex-column">
                     Email
                     <input type="email" v-model="email" class="form__input-text">
@@ -38,75 +41,9 @@
     let consent = ref(false);
     let finished = ref(false);
     let error = ref('');
+    let failedCaptcha = ref(false);
 
-    const questions = [
-        {
-            id: 1,
-            question: 'question 1',
-            answers: [
-                {
-                    answer: 'answer 1.1',
-                    childQuestionId: 22,
-                },
-                {
-                    answer: 'answer 1.2',
-                    childQuestionId: 22,
-                },
-                {
-                    answer: 'answer 1.3',
-                    childQuestionId: 33,
-                },
-            ]
-        },
-        {
-            id: 22,
-            question: 'question 2',
-            answers: [
-                {
-                    answer: 'answer 2.1',
-                    childQuestionId: 33,
-                },
-                {
-                    answer: 'answer 2.2',
-                    childQuestionId: 33,
-                },
-                {
-                    answer: 'answer 2.3',
-                    childQuestionId: 44,
-                },
-            ]
-        },
-        {
-            id: 33,
-            question: 'question 3',
-            answers: [
-                {
-                    answer: 'answer 3.1',
-                },
-                {
-                    answer: 'answer 3.2',
-                },
-                {
-                    answer: 'answer 3.3',
-                },
-            ]
-        },
-        {
-            id: 44,
-            question: 'question 4',
-            answers: [
-                {
-                    answer: 'answer 4.1',
-                },
-                {
-                    answer: 'answer 4.2',
-                },
-                {
-                    answer: 'answer 4.3',
-                },
-            ]
-        },
-    ]
+    const questions = window.questions;
 
     let currentQuestionIndex = ref(0);
     let usedQuestions = [];
@@ -116,10 +53,22 @@
     let response = ref({});
 
     const nextView = () => {
-        const mailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-        console.log('nextView', email.value.match('/^[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\' +
-            '.[a-zA-Z0-9-]+)*$/'));
-        email.value.match(mailRegex) !== null ? view.value += 1 : error.value = 'Niepoprawny adres email';
+        grecaptcha.enterprise.ready(async () => {
+            const token = await grecaptcha.enterprise.execute('6LdEpHIpAAAAAAPzYkxy4y1RsZYFdzxFvUX3iMnt', {action: 'NEXT_VIEW'});
+            axios.post(`/recaptcha`, {
+                token: token,
+                csrf_token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            })
+                .then(res => {
+                    if (res.data.success) {
+                        const mailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+                        email.value.match(mailRegex) !== null ? view.value += 1 : error.value = 'Niepoprawny adres email';
+                    }
+                })
+                .catch(err => {
+                    failedCaptcha.value = true;
+                });
+        });
     }
 
     const nextQuestion = (questionId, answer) => {
@@ -154,6 +103,9 @@
         }
 
     };
+    function onClick(e) {
+        e.preventDefault();
+    }
 
 </script>
 
