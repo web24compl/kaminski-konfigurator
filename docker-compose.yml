@@ -24,7 +24,9 @@ services:
             - ./docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
         working_dir: /var/www/html
         environment:
-            - PHP_IDE_CONFIG=serverName=tsd-app
+            - PHP_IDE_CONFIG=serverName=kaminski
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
     mysql:
         image: mysql:8.0.31
         container_name: kam_konf_mysql
