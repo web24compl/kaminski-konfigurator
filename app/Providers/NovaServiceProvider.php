@@ -8,7 +8,7 @@ use App\Nova\Question;
 use App\Nova\SystemMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Nova\Dashboards\Main;
+use App\Nova\Dashboards\Main;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\MenuSection;
@@ -26,6 +26,17 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function boot()
     {
         parent::boot();
+
+        $this->app->make(\Illuminate\Contracts\Http\Kernel::class)
+            ->appendToMiddlewarePriority(\Laravel\Nova\Http\Middleware\ServeNova::class);
+
+        Nova::booted(function () {
+            $this->app->setLocale('pl');
+        });
+
+        Nova::serving(function () {
+            $this->app->setLocale('pl');
+        });
 
         NovaSettings::addSettingsFields([
             Text::make('Email kontaktowy', 'contact_email'),

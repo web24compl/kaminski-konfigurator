@@ -487,5 +487,7 @@
     "gptSystemMessages": "Wiadomości systemowe do chatu GPT",
     "qAndA": "Pytania i odpowiedzi",
     "users": "Użytkownicy",
-    "email": "Mail"
+    "user": "Użytkownika",
+    "email": "Mail",
+    "mainDashboard": "Panel Główny"
 }

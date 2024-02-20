@@ -487,5 +487,6 @@
     "gptSystemMessages": "System messages to chat GPT",
     "qAndA": "Questions and answers",
     "users": "Users",
-    "email": "Mail"
+    "email": "Mail",
+    "mainDashboard": "Main"
 }

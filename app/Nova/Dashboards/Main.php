@@ -19,4 +19,9 @@ class Main extends Dashboard
             (new Export)->export(),
         ];
     }
+
+    public function label()
+    {
+        return __('mainDashboard');
+    }
 }
