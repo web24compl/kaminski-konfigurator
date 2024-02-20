@@ -31,8 +31,6 @@ class Question extends Resource
     public static $search = [
         'id',
         'question',
-        'answer',
-        'parent_id',
     ];
 
     /**
