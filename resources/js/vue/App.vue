@@ -52,7 +52,8 @@
 
     let response = ref({});
 
-    const nextView = () => {
+    const nextView = (e) => {
+        e.target.disabled = true;
         grecaptcha.enterprise.ready(async () => {
             const token = await grecaptcha.enterprise.execute('6LdEpHIpAAAAAAPzYkxy4y1RsZYFdzxFvUX3iMnt', {action: 'NEXT_VIEW'});
             axios.post(`/recaptcha`, {
