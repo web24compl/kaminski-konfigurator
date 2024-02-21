@@ -2,14 +2,16 @@
 
 namespace App\Providers;
 
-use App\Nova\Answer;
 use App\Nova\ChatResponse;
-use App\Nova\Question;
+use App\Nova\Dashboards\QAndA;
 use App\Nova\SystemMessage;
+use App\Nova\User;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Nova\Dashboards\Main;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Middleware\ServeNova;
 use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Nova;
@@ -27,8 +29,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         parent::boot();
 
-        $this->app->make(\Illuminate\Contracts\Http\Kernel::class)
-            ->appendToMiddlewarePriority(\Laravel\Nova\Http\Middleware\ServeNova::class);
+        $this->app->make(Kernel::class)
+            ->appendToMiddlewarePriority(ServeNova::class);
 
         Nova::booted(function () {
             $this->app->setLocale('pl');
@@ -53,14 +55,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                    MenuItem::resource(SystemMessage::class)
                ])->collapsable(),
 
-               MenuSection::make(__('qAndA'), [
-                   MenuItem::resource(Answer::class),
-                   MenuItem::resource(Question::class)
-               ])->collapsable(),
+               MenuSection::dashboard(QAndA::class)->icon('question-mark-circle'),
 
                MenuItem::make(__('novaSettings.navigationItemTitle'), 'nova-settings'),
 
-               MenuItem::resource(\App\Nova\User::class),
+               MenuItem::resource(User::class),
            ];
         });
     }
@@ -102,7 +101,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function dashboards()
     {
         return [
-            new \App\Nova\Dashboards\Main,
+            new Main,
+            new QAndA(),
         ];
     }
 
