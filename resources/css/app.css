@@ -1,5 +1,6 @@
 @import 'question.css';
 @import 'button.css';
+@import "product.css";
 
 :root {
     --primary-color: #e6bc6b;

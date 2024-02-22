@@ -21,9 +21,24 @@
             </div>
             <Question :question="questions[currentQuestionIndex]" @nextQuestion="nextQuestion"/>
         </div>
-        <div v-else-if="view === 2">
-            {{response}}
-        <!-- Prezentacja produktu -->
+        <div v-else-if="view === 2 && !error">
+            <div v-if="Object.keys(response).length === 0">
+                <h2>Trwa wyszukiwanie odpowiedniego produktu</h2>
+            </div>
+            <div v-else class="product">
+                <h2>
+                    Sugerowany produkt:
+                </h2>
+                <div class="product__image">
+                    <img :src="response.image" alt="product">
+                </div>
+                <div class="product__info">
+                    <h2>{{ response.name }}</h2>
+                    <h3>{{ response.price }} PLN</h3>
+                    <p v-html="response.descriptionhtml"></p>
+                    <a :href="response.permalink" class="button button--large" target="_blank">Zobacz produkt</a>
+                </div>
+            </div>
         </div>
         <div v-else>
             <h2>Wystąpił błąd</h2>
@@ -63,7 +78,12 @@
                 .then(res => {
                     if (res.data.success) {
                         const mailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-                        email.value.match(mailRegex) !== null ? view.value += 1 : error.value = 'Niepoprawny adres email';
+                        if (email.value.match(mailRegex) !== null) {
+                            view.value += 1;
+                            error.value = '';
+                        } else {
+                            error.value = 'Niepoprawny adres email';
+                        }
                     }
                 })
                 .catch(err => {
@@ -97,6 +117,10 @@
                 console.log(response.value)
             })
                 .catch(err => {
+                response.value = {
+                    data: "Wystąpił błąd spróbuj ponownie"
+                }
+                error.value = true
                 console.log(err.response.data)
             });
 

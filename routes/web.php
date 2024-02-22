@@ -21,3 +21,5 @@ Route::post('/recaptcha', [OpenAiApiController::class, 'validateCaptcha']);
 Route::post('/ai', [OpenAiApiController::class, 'index']);
 
 Route::post('/export', [ExportController::class, 'exportChatResponses']);
+
+Route::get('/woocomerce', [OpenAiApiController::class, 'getWoocomerceProducts']);
