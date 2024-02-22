@@ -17,7 +17,6 @@
     "vue-loader": "^16.8.3"
   },
   "dependencies": {
-    "jqwidgets-scripts": "^19.0.0",
-    "primevue": "^3.48.1"
+    "axios": "^1.6.7"
   }
 }

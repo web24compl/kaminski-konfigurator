@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\ChatResponseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|ChatResponse whereResponse($value)
  * @method static Builder|ChatResponse whereTokens($value)
  * @method static Builder|ChatResponse whereUpdatedAt($value)
+ * @method static ChatResponseFactory factory($count = null, $state = [])
  */
 class ChatResponse extends Model
 {
