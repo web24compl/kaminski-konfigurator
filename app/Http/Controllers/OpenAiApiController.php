@@ -116,7 +116,7 @@ class OpenAiApiController extends Controller
 
             $product = "id: " . $element['id'] .
                 ", name: " . $element['name'] .
-                ", price: " . $element['price'] .
+                ", price: " . $element['price'];
 //                ", description: " . $element['description']
 
             array_push($systemMessages, $product);
