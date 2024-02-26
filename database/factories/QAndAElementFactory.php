@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\QAndAElement;
+use App\Models\QAndATreeItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class QAndAElementFactory extends Factory
 {
-    protected $model = QAndAElement::class;
+    protected $model = QAndATreeItem::class;
 
     public function definition(): array
     {

@@ -21,20 +21,20 @@ use Illuminate\Support\Carbon;
  * @property int|null $parent_question_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, QAndAElement> $answers
+ * @property-read Collection<int, QAndATreeItem> $answers
  * @property-read int|null $answers_count
- * @property-read QAndAElement|null $parentQuestion
- * @method static Builder|QAndAElement newModelQuery()
- * @method static Builder|QAndAElement newQuery()
- * @method static Builder|QAndAElement query()
- * @method static Builder|QAndAElement whereAnswerText($value)
- * @method static Builder|QAndAElement whereCreatedAt($value)
- * @method static Builder|QAndAElement whereId($value)
- * @method static Builder|QAndAElement whereParentQuestionId($value)
- * @method static Builder|QAndAElement whereQuestionText($value)
- * @method static Builder|QAndAElement whereUpdatedAt($value)
+ * @property-read QAndATreeItem|null $parentQuestion
+ * @method static Builder|QAndATreeItem newModelQuery()
+ * @method static Builder|QAndATreeItem newQuery()
+ * @method static Builder|QAndATreeItem query()
+ * @method static Builder|QAndATreeItem whereAnswerText($value)
+ * @method static Builder|QAndATreeItem whereCreatedAt($value)
+ * @method static Builder|QAndATreeItem whereId($value)
+ * @method static Builder|QAndATreeItem whereParentQuestionId($value)
+ * @method static Builder|QAndATreeItem whereQuestionText($value)
+ * @method static Builder|QAndATreeItem whereUpdatedAt($value)
  */
-class QAndAElement extends Model
+class QAndATreeItem extends Model
 {
     use HasFactory;
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Configurator\QAndATree;
 
 use App\Http\Controllers\Controller;
-use App\Models\QAndAElement;
+use App\Models\QAndATreeItem;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
@@ -13,7 +13,7 @@ class QAndAController extends Controller
 {
     public function tree(): JsonResponse
     {
-        $tree = QAndAElement::query()->with(['answers'])->get()->collect();
+        $tree = QAndATreeItem::query()->with(['answers'])->get()->collect();
 
         $buildTree = $this->buildTree($tree);
         return response()->json($buildTree);
@@ -24,7 +24,7 @@ class QAndAController extends Controller
     {
         $branch = [];
 
-        /** @var QAndAElement $element */
+        /** @var QAndATreeItem $element */
         foreach ($elements as $element) {
             if ($element->parent_question_id === $parentId) {
                 $newElement = [
