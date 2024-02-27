@@ -4,18 +4,34 @@
             <div v-if="child.answer_text"><i>Odpowiedź:</i> <b>{{ child.answer_text }}</b></div>
             <div v-if="child.question_text"><i>Pytanie:</i> <b>{{ child.question_text }}</b></div>
 
-            <span>(edit)</span>
-            <span>(add new)</span>
+            <span @click="showEditForm(child)" style="cursor: pointer;">(edit)</span>
+            <span @click="showCreateForm(child)" style="cursor: pointer;">(add new)</span>
 
-            <Tree v-if="child.children" :children="child.children"></Tree>
+            <Tree
+                    v-if="child.children"
+                    :children="child.children"
+                    @showEditForm="showEditForm"
+                    @showCreateForm="showCreateForm"
+            ></Tree>
         </li>
     </ul>
 </template>
+
 
 <script setup>
 import Tree from "./Tree.vue";
 
 const props = defineProps(['children'])
+const emit = defineEmits(['showCreateForm', 'showEditForm'])
+
+const showCreateForm = (item) => {
+    emit('showCreateForm', item)
+}
+
+const showEditForm = (item) => {
+    emit('showEditForm', item)
+}
+
 </script>
 
 <style>

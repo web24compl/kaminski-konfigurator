@@ -43,6 +43,7 @@ class QAndATreeItem extends Model
     protected $fillable = [
         'question_text',
         'answer_text',
+        'parent_question_id'
     ];
 
     public function parentQuestion(): BelongsTo

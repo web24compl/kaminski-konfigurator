@@ -12,10 +12,13 @@ return new class extends Migration {
     {
         Schema::create('q_and_a_tree', function (Blueprint $table) {
             $table->id();
-            $table->text('question_text');
-            $table->text('answer_text');
+            $table->text('question_text')->nullable();
+            $table->text('answer_text')->nullable();
 
-            $table->foreignId('parent_question_id')->nullable()->constrained('q_and_a_tree');
+            $table->foreignId('parent_question_id')
+                ->nullable()
+                ->constrained('q_and_a_tree')
+                ->onDelete('cascade');
 
             $table->timestamps();
         });
