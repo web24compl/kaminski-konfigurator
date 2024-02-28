@@ -488,5 +488,6 @@
     "qAndA": "Questions and answers",
     "users": "Users",
     "email": "Mail",
-    "mainDashboard": "Main"
+    "mainDashboard": "Main",
+    "gptSystemMessage": "System message"
 }

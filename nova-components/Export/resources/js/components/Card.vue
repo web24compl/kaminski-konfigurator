@@ -15,7 +15,7 @@
                 </div>
 
                 <button type="submit" class="w-full flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium dark:text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-400 dark:hover:bg-indigo-500 dark:focus:ring-indigo-300">
-                    Eksport perla export
+                    Eksport
                 </button>
             </form>
         </div>

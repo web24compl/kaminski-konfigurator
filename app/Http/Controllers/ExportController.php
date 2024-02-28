@@ -7,6 +7,7 @@ use App\Models\ChatResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
 
 class ExportController extends Controller
@@ -40,7 +41,7 @@ class ExportController extends Controller
 
             return response()->download($tempZipFilePath, $zipFilename)->deleteFileAfterSend(true);
         } else {
-            return response()->json(['message' => 'Failed to create zip archive'], 500);
+            return response()->json(['message' => 'Failed to create zip archive'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
