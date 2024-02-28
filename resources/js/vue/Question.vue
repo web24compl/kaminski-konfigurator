@@ -7,10 +7,10 @@
                     class="radio"
                     type="radio"
                     :id="answer.id"
-                    :value="answer.id"
+                    :value="answer.answer_text"
                     v-model="selectedAnswer"
                     :name="question.question_text"
-                    @change="check($event, answer.parent_question_id)"
+                    @change="check($event, answer.id)"
                 >
                 <label :for="answer.answer_text">{{ answer.answer_text }}</label>
             </div>
@@ -32,7 +32,7 @@
 
     let checked = ref(false);
     let selectedAnswerQuestionId = ref(null);
-    let selectedAnswer = '';
+    let selectedAnswer = ref('');
 
     const check = (e, question_id = -1) => {
         checked.value = true;
@@ -40,11 +40,11 @@
     }
 
     const reset = () => {
-        emit('nextQuestion', selectedAnswerQuestionId, selectedAnswer)
+        emit('nextQuestion', selectedAnswerQuestionId, selectedAnswer.value)
 
         checked.value = false;
         selectedAnswerQuestionId = null;
-        selectedAnswer = null;
+        selectedAnswer.value = '';
 
     }
 

@@ -97,14 +97,13 @@
 
         usedQuestions.push(currentQuestionIndex.value);
         answers.push(answer);
-
-        if (nextIndex !== -1) {
+        if (questions[nextIndex].question_text !== '') {
             currentQuestionIndex.value = nextIndex;
         }
         else {
             finished.value = true;
 
-            let questionsContent = usedQuestions.map((questionIndex) => questions[questionIndex].question);
+            let questionsContent = usedQuestions.map((questionIndex) => questions[questionIndex].question_text);
 
             axios.post(`${window.location.origin}/ai`, {
                 answers: answers,
