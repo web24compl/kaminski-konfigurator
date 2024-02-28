@@ -1,18 +1,18 @@
 <template xmlns="http://www.w3.org/1999/html">
     <div class="container">
-        <h2>{{ question.question }}</h2>
+        <h2>{{ question.question_text }}</h2>
         <div class="question">
             <div v-for="answer in question.answers" class="form__group">
                 <input
                     class="radio"
                     type="radio"
-                    :id="answer.answer"
-                    :value="answer.answer"
+                    :id="answer.id"
+                    :value="answer.id"
                     v-model="selectedAnswer"
-                    :name="question.question"
-                    @change="check($event, answer.question_id)"
+                    :name="question.question_text"
+                    @change="check($event, answer.parent_question_id)"
                 >
-                <label :for="answer.answer">{{ answer.answer }}</label>
+                <label :for="answer.answer_text">{{ answer.answer_text }}</label>
             </div>
             <button :disabled="!checked"
                     :class="`button button--large ${checked ? '' : 'button--disabled'}`"

@@ -59,12 +59,8 @@ const deleteTreeItem = (item) => {
 
 </script>
 
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
+<style scoped>
+
 
 ul li {
     margin-left: 15px;

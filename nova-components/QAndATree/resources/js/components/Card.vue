@@ -135,7 +135,7 @@ onMounted(async () => {
 });
 
 </script>
-<style>
+<style scoped>
 li {
     padding-left: 30px;
 }
