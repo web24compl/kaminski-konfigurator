@@ -21,7 +21,8 @@
         "psr/simple-cache": "^2.0",
         "stepanenko3/nova-json": "^4.0",
         "web24/export": "@dev",
-        "ext-zip": "*"
+        "ext-zip": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.15",

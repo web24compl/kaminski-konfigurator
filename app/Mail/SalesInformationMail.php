@@ -17,7 +17,6 @@ class SalesInformationMail extends Mailable
      */
     public function __construct(protected string $email, protected $input, protected $gptResponse)
     {
-        //
         $this->name = $this->gptResponse['name'];
         $this->id = $this->gptResponse['id'];
     }
@@ -34,7 +33,8 @@ class SalesInformationMail extends Mailable
                 'id' => $this->id,
             ])
             ->subject('Informacje o sprzedaży')
-            ->attach(Excel::download(new ExportFilteredResponse($this->input, $this->email, $this->gptResponse),'input.csv')->getFile(), ['as' => 'list.csv'])
+            ->attach(Excel::download(new ExportFilteredResponse($this->input, $this->email, $this->gptResponse), 'input.csv')
+                ->getFile(), ['as' => 'list.csv'])
             ->from($this->email);
     }
 }

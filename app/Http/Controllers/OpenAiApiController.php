@@ -10,22 +10,25 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use OpenAI\Laravel\Facades\OpenAI;
+use Symfony\Component\HttpFoundation\Response;
 
 class OpenAiApiController extends Controller
 {
-    public function getWoocomerceProducts()
+    CONST PRODUCTS_CACHE_KEY = 'woocommerce_products';
+    CONST PRODUCTS_DIRTY_CACHE_KEY = 'woocommerce_products_dirty';
+    CONST CACHE_DURATION = 60 * 60 * 24;
+
+    public function getWoocomerceProducts(): array
     {
-        $cacheKey = 'woocommerce_products';
+        $cacheDuration = time() + self::CACHE_DURATION;
 
-        $cacheDuration = now()->addDay();
-
-        if (Cache::has($cacheKey)) {
-            $clearedProducts = Cache::get($cacheKey);
+        if (Cache::has(self::PRODUCTS_CACHE_KEY)) {
+            $filteredProducts = Cache::get(self::PRODUCTS_CACHE_KEY);
         }
         else {
-            $url = env('WOOCOMMERCE_API_URL') . '/products?per_page=100';
-            $consumerKey = env('WOOCOMMERCE_API_KEY_PUBLIC');
-            $consumerSecret = env('WOOCOMMERCE_API_KEY_PRIVATE');
+            $url = config('woocommerce.api_url') . '/products?per_page=100';
+            $consumerKey = config('woocommerce.consumer_key');
+            $consumerSecret = config('woocommerce.consumer_secret');
 
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -37,25 +40,29 @@ class OpenAiApiController extends Controller
 
             $products = json_decode($response);
 
-            Cache::put('woocommerce_products_dirty', $products, $cacheDuration);
-            $clearedProducts = [];
+            $filteredProducts = [];
 
             foreach ($products as $product) {
-                $clearedProducts[] = [
+                $descriptionConfig = array_reduce($product->meta_data, function($carry, $item) {
+                    return $item->key === '_custom_textarea' ? $item->value : $carry;
+                }, null);
+
+                $filteredProducts[] = [
                     'id' => $product->id,
                     'name' => $product->name,
                     'price' => $product->price,
                     'tags' => $product->tags,
                     'categories' => $product->categories,
-                    'description' => str_replace("\n", '', strip_tags($product->description)),// Todo dodanie opisu dla nas nie tego wyświetlanego na stronie
+                    'description' => str_replace("\n", '', strip_tags($product->description)),
                     'descriptionhtml' => $product->description,
                     'image' => $product->images[0]->src,
                     'permalink' => $product->permalink,
+                    'descriptionConfig' => $descriptionConfig,
                 ];
             }
-            Cache::put($cacheKey, $clearedProducts, $cacheDuration);
+            Cache::put(self::PRODUCTS_CACHE_KEY, $filteredProducts, $cacheDuration);
         }
-        return $clearedProducts;
+        return $filteredProducts;
     }
 
     public function show()
@@ -65,7 +72,7 @@ class OpenAiApiController extends Controller
         return view('layouts.app', ['questions' => $questions]);
     }
 
-    public function validateCaptcha (Request $request)
+    public function validateCaptcha (Request $request): \Illuminate\Http\JsonResponse
     {
         $token = $request->input('token');
         if (empty($token)) {
@@ -88,43 +95,43 @@ class OpenAiApiController extends Controller
         $resultJson = json_decode($response);
 
         if ($resultJson->score > 0.5) {
-            return response()->json($resultJson, 200);
+            return response()->json($resultJson, Response::HTTP_OK);
         } else {
-            return response()->json(['message' => 'Captcha validation failed'], 400);
+            return response()->json(['message' => 'Captcha validation failed'], Response::HTTP_BAD_REQUEST);
         }
     }
 
     public function index(Request $request)
     {
-
-        $email = $request->get('email');
-
-        $wordpressElements = $this->getWoocomerceProducts();
         if($request->get('questions') == null || $request->get('answers') == null ||
            $request->get('questions') == [] || $request->get('answers') == [])
         {
-            return response()->json(['error' => 'questions or answers are empty'], 400);
+            return response()->json(['error' => 'Questions or answers are empty'], Response::HTTP_BAD_REQUEST);
         }
 
+        $email = $request->get('email');
         $questions = $request->get('questions');
         $answers = $request->get('answers');
-        $systemMessages = SystemMessage::all()->pluck('content')->toArray();
 
+        $systemMessages = SystemMessage::all()->pluck('content')->toArray();
         array_push($systemMessages, "Produkty z których wybierasz na podstawie odpowiedzi klienta");
+
+        $wordpressElements = $this->getWoocomerceProducts();
 
         foreach ($wordpressElements as $element) {
 
             $product = "id: " . $element['id'] .
                 ", name: " . $element['name'] .
                 ", price: " . $element['price'];
-//                ", description: " . $element['description']
+
+            $product .= $element['descriptionConfig'] != '' ? ", description: " . $element['descriptionConfig'] : '';
 
             array_push($systemMessages, $product);
         }
 
-        $systemMessages = $this->setMessageFromArray('system', $systemMessages);
+        array_push($systemMessages,'zwróć json id, name');
 
-        array_push($systemMessages, ['role' => 'system', 'content' => 'zwróć json id, name, price']);
+        $systemMessages = $this->setMessageFromArray('system', $systemMessages);
 
         $questions = $this->setMessageFromArray('assistant', $questions);
         $answers = $this->setMessageFromArray('user', $answers);
@@ -133,25 +140,26 @@ class OpenAiApiController extends Controller
             array_push($systemMessages, $answers[$i]);
         }
 
-        $response = OpenAI::chat()->create([
+        $gptResponse = OpenAI::chat()->create([
             'messages' => $systemMessages,
             'temperature' => 0,
             'model' => config('openai.default_engine'),
-            'max_tokens' => 500,
             'response_format' => ['type' => 'json_object'],
         ]);
-        $product = $this->getProductFromId(json_decode($response->choices[0]->message->content)->id, $wordpressElements);
+
+        $product = $this->getProductFromId(json_decode($gptResponse->choices[0]->message->content)->id, $wordpressElements);
 
         $chatResponse = new ChatResponse();
         $chatResponse->input = $systemMessages;
-        $chatResponse->response = json_decode($response->choices[0]->message->content);
-        $chatResponse->tokens = $response->usage->totalTokens;
+        $chatResponse->response = json_decode($gptResponse->choices[0]->message->content);
+        $chatResponse->tokens = $gptResponse->usage->totalTokens;
         $chatResponse->mail = $email;
         $chatResponse->save();
 
         Mail::to(nova_get_setting('sales_email'))
             ->send(new SalesInformationMail($email, $chatResponse->input, $chatResponse->response));
-        return response()->json($product, 200);
+
+        return response()->json($product, Response::HTTP_OK);
     }
 
     private function setMessageFromArray(string $role, array $messages): array

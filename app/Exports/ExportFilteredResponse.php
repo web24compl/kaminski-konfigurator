@@ -52,7 +52,6 @@ class ExportFilteredResponse implements FromArray, WithHeadings
                 $index++;
             }
         }
-//        dd($data);
         return $data;
     }
 

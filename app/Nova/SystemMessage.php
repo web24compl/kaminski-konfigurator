@@ -98,4 +98,9 @@ class SystemMessage extends Resource
     {
         return __('gptSystemMessages');
     }
+
+    public static function singularLabel()
+    {
+        return __('gptSystemMessage');
+    }
 }

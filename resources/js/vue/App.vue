@@ -95,7 +95,7 @@
     const nextQuestion = (questionId, answer) => {
         const nextIndex = questions.findIndex(question => question.id === questionId);
 
-        usedQuestions.push(currentQuestionIndex.value)
+        usedQuestions.push(currentQuestionIndex.value);
         answers.push(answer);
 
         if (nextIndex !== -1) {
@@ -114,14 +114,13 @@
             })
                 .then(res => {
                 response.value = res.data;
-                console.log(response.value)
+                error.value = false;
             })
                 .catch(err => {
                 response.value = {
                     data: "Wystąpił błąd spróbuj ponownie"
                 }
-                error.value = true
-                console.log(err.response.data)
+                error.value = true;
             });
 
             view.value += 1;

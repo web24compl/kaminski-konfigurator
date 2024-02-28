@@ -489,5 +489,6 @@
     "users": "Użytkownicy",
     "user": "Użytkownika",
     "email": "Mail",
-    "mainDashboard": "Panel Główny"
+    "mainDashboard": "Panel Główny",
+    "gptSystemMessage": "Wiadomość systemowa"
 }
