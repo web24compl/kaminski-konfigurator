@@ -4,63 +4,58 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Answer;
-use App\Models\Question;
+use App\Models\QAndATreeItem;
 use Illuminate\Database\Seeder;
 
 class QuestionsAndAnswersSeeder extends Seeder
 {
     public function run(): void
     {
-        $q1 = Question::factory()->create([
-            'question' => 'W jakim kraju mieszkasz?'
+
+        $q1 = QAndATreeItem::factory()->create([
+            'question_text' => 'W jakim kraju mieszkasz?',
+            'answer_text' => '',
         ]);
 
-        $q2 = Question::factory()->create([
-            'question' => 'Mówisz po polsku?'
+        $q1_1 = QAndATreeItem::factory()->create([
+            'parent_question_id' => $q1->id,
+            'answer_text' => 'W Polsce',
+            'question_text' => 'Mówisz po polsku?'
         ]);
 
-        $q3 = Question::factory()->create([
-            'question' => 'Mówisz po holendersku?'
+        $q1_1_1 = QAndATreeItem::factory()->create([
+            'parent_question_id' => $q1_1->id,
+            'answer_text' => 'Tak',
+        ]);
+        $q1_1_2 = QAndATreeItem::factory()->create([
+            'parent_question_id' => $q1_1->id,
+            'answer_text' => 'Nie',
         ]);
 
-
-        $q1_a1 = Answer::factory()->create([
-            'answer' => 'Polska',
-            'question_id' => $q2
+        $q1_2 = QAndATreeItem::factory()->create([
+            'parent_question_id' => $q1->id,
+            'answer_text' => 'W Holandii',
+            'question_text' => 'Mówisz po holendersku?'
         ]);
 
-        $q1_a2 = Answer::factory()->create([
-            'answer' => 'Holandia',
-            'question_id' => $q3
+        $q1_2_1 = QAndATreeItem::factory()->create([
+            'parent_question_id' => $q1_2->id,
+            'answer_text' => 'Tak',
+        ]);
+        $q1_2_2 = QAndATreeItem::factory()->create([
+            'parent_question_id' => $q1_2->id,
+            'answer_text' => 'Nie',
+            'question_text' => 'Zamierzasz się uczyć?'
         ]);
 
-        $q1->answers()->saveMany(collect([$q1_a1, $q1_a2]));
-
-
-        $q2_a1 = Answer::factory()->create([
-            'answer' => 'Tak',
-            'question_id' => null
+        $q1_2_2_1 = QAndATreeItem::factory()->create([
+            'parent_question_id' => $q1_2_2->id,
+            'answer_text' => 'Tak',
+        ]);
+        $q1_2_2_2 = QAndATreeItem::factory()->create([
+            'parent_question_id' => $q1_2_2->id,
+            'answer_text' => 'Nie',
         ]);
 
-        $q2_a2 = Answer::factory()->create([
-            'answer' => 'Nie',
-            'question_id' => null
-        ]);
-
-        $q2->answers()->saveMany(collect([$q2_a1, $q2_a2]));
-
-
-        $q3_a1 = Answer::factory()->create([
-            'answer' => 'Tak',
-            'question_id' => null
-        ]);
-
-        $q3_a2 = Answer::factory()->create([
-            'answer' => 'Nie',
-            'question_id' => null
-        ]);
-
-        $q3->answers()->saveMany(collect([$q3_a1, $q3_a2]));
     }
 }

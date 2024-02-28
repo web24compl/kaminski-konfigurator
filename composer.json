@@ -23,8 +23,10 @@
         "web24/export": "@dev",
         "ext-zip": "*",
         "ext-curl": "*"
+        "configurator/q-and-a-tree": "@dev"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.10",
         "barryvdh/laravel-ide-helper": "^2.15",
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
@@ -88,6 +90,10 @@
         "0": {
             "type": "path",
             "url": "./nova-components/Export"
+        },
+        "1": {
+            "type": "path",
+            "url": "./nova-components/QAndATree"
         }
     },
     "http-basic": {
