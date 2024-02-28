@@ -1,7 +1,7 @@
 <template>
-    <div class="popup" @keyup.esc="$emit('hideItemTreePopup')" tabindex="1" ref="popupContainer" v-if="isOpen">
+    <div class="popup" @keyup.esc="$emit('hideItemTreePopup')" tabindex="1" v-if="isOpen">
         <div class="popup__container bg-white dark:bg-gray-800 rounded-lg shadow">
-            <div class="popup__content" id="form-scrollable-content">
+            <div class="popup__content">
                 <span @click="$emit('hideItemTreePopup')" class="close">&times;</span>
                 <div class="popup__head mb-5">
                     <h2 class="popup__header">Pytanie / odpowiedź</h2>
@@ -14,36 +14,50 @@
 
                 <div class="d-flex flex-column">
 
-                    <form-row name="answer_text" label="Treść odpowiedzi" :error="errors?.answer_text">
-                        <textarea
-                                class="form-control"
-                                name="answer_text"
-                                v-model="treeItem.answer_text"/>
+                    <form-row v-if="!treeItem.is_first_item || treeItem.parent_question?.question_text"
+                              name="answer_text" label="Treść odpowiedzi"
+                              :error="errors?.answer_text">
+                        <p>
+                            <textarea
+                                    class="textarea"
+                                    name="answer_text"
+                                    v-model="treeItem.answer_text"/>
+                        </p>
                     </form-row>
 
-                    <form-row name="question_text" label="Treść następnego pytania" :error="errors?.question_text">
-                        <textarea
-                                class="form-control"
-                                name="question_text"
-                                v-model="treeItem.question_text"/>
+                    <p v-if="!treeItem.is_first_item" class="mb-2">
+                        <input type="checkbox" id="input_question_text" name="input_question_text" class="mr-2" v-model="input_question_text">
+                        <label for="input_question_text">Dodaj pytanie wynikające z odpowiedzi</label>
+                    </p>
+
+                    <form-row
+                            v-if="input_question_text || treeItem.is_first_item"
+                            name="question_text" label="Treść pytania" :error="errors?.question_text">
+                        <p>
+                            <textarea
+                                    class="textarea"
+                                    name="question_text"
+                                    v-model="treeItem.question_text"/>
+                        </p>
                     </form-row>
 
                     <div v-if="treeItem.id">
-                        <button type="button" class="btn btn-success form-control"
+                        <button
+                                class="mr-2 shrink-0 h-9 font-bold px-4 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring text-white dark:text-gray-800 inline-flex items-center shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600"
                                 @click="$emit('updateTreeItem', treeItem)">
                             Aktualizuj
                         </button>
-                        <br>
-                        <button type="button" class="btn btn-danger form-control mt-2 text-center"
+                        <button
+                                class="mr-2 shrink-0 h-9 font-bold px-4 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring text-white dark:text-gray-800 inline-flex items-center shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600"
                                 @click="$emit('deleteTreeItem', treeItem)">
                             Usuń
                         </button>
                     </div>
                     <div v-else>
-                        <br>
-                        <button type="button" class="btn btn-success form-control text-center"
+                        <button
+                                class="mr-2 shrink-0 h-9 font-bold px-4 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring text-white dark:text-gray-800 inline-flex items-center shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600"
                                 @click="$emit('createTreeItem', treeItem)">
-                            Stwórz nowy
+                            Stwórz nowy element
                         </button>
                     </div>
 
@@ -60,9 +74,11 @@ import {ref, watch} from "vue";
 
 const props = defineProps(['isOpen', 'selectedTreeItem', 'errors']);
 let treeItem = ref({...props.selectedTreeItem});
+let input_question_text = ref(!!treeItem.question_text);
 
 watch(() => props.selectedTreeItem, () => {
     treeItem = {...props.selectedTreeItem}
+
 })
 </script>
 
@@ -84,7 +100,7 @@ $sideMargin: 20px;
   background-color: rgba(0, 0, 0, 0.6);
 
   &__container {
-    height: 400px;
+    height: 500px;
     width: 620px;
     margin: auto;
     box-shadow: -10px 0px 20px 20px rgba(0, 0, 0, 0.1);
@@ -125,6 +141,13 @@ $sideMargin: 20px;
     font-weight: bold;
     cursor: pointer;
     margin-top: 15px;
+  }
+
+  .textarea {
+    width: 100%;
+    height: 70px;
+    padding: 5px;
+    border: 2px solid #666;
   }
 }
 </style>

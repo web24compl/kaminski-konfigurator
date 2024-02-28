@@ -7,8 +7,8 @@ namespace Configurator\QAndATree\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\QAndATreeItem;
 use Configurator\QAndATree\Http\Requests\SaveTreeItemRequest;
+use Configurator\QAndATree\Http\Requests\UpdateTreeItemRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class QAndAController extends Controller
@@ -19,25 +19,21 @@ class QAndAController extends Controller
 
         $buildTree = $this->buildTree($tree);
 
-        return response()->json(['multilevel_tree' => $buildTree, 'tree_items' => $tree]);
+        return response()->json(['tree' => $buildTree]);
     }
 
     public function create(SaveTreeItemRequest $request): JsonResponse
     {
         $input = $request->validated();
 
-        $item = new QAndATreeItem([
-            'question_text' => $input['question_text'],
-            'answer_text' => $input['answer_text'],
-            'parent_question_id' => (int)$input['parent_question_id'],
-        ]);
+        $item = new QAndATreeItem($input);
 
         $item->save();
 
         return response()->json();
     }
 
-    public function update(QAndATreeItem $item, Request $request): JsonResponse
+    public function update(UpdateTreeItemRequest $request, QAndATreeItem $item): JsonResponse
     {
         $item->update([
             'question_text' => $request->get('question_text'),
@@ -61,12 +57,16 @@ class QAndAController extends Controller
         /** @var QAndATreeItem $element */
         foreach ($elements as $element) {
             if ($element->parent_question_id === $parentId) {
-                $newElement = [
-                    'id' => $element->id,
-                    'question_text' => $element->question_text,
-                    'answer_text' => $element->answer_text,
-                    'parent_question' => $element->parentQuestion,
-                ];
+                $newElement = $element;
+
+//                [
+//                    'id' => $element->id,
+//                    'question_text' => $element->question_text,
+//                    'answer_text' => $element->answer_text,
+//                    'parent_question' => $element->parentQuestion,
+//                    'is_first_item' => $element->is_first_item,
+//                    'is_last_item' => $element->is_last_item,
+//                ]
 
                 $children = $this->buildTree($elements, $element->id);
 

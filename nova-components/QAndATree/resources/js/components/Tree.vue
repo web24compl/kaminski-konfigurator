@@ -1,17 +1,32 @@
 <template>
     <ul>
-        <li v-for="child in children">
-            <div v-if="child.answer_text"><i>Odpowiedź:</i> <b>{{ child.answer_text }}</b></div>
-            <div v-if="child.question_text"><i>Pytanie:</i> <b>{{ child.question_text }}</b></div>
+        <li v-for="item in children">
+            <div v-if="item.answer_text"><i>Odpowiedź:</i> <b>{{ item.answer_text }}</b></div>
+            <div v-if="item.question_text"><i>Pytanie:</i> <b>{{ item.question_text }}</b></div>
 
-            <span @click="showEditForm(child)" style="cursor: pointer;">(edit)</span>
-            <span @click="showCreateForm(child)" style="cursor: pointer;">(add new)</span>
+            <button
+                    class="mr-2 shrink-0 h-6 px-1 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring text-white dark:text-gray-800 inline-flex items-center shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600"
+                    @click="showCreateForm(item)"
+                    :class="`${item.question_text ?? 'disabled'}`">
+                Dodaj odpowiedź
+            </button>
+            <button
+                    class="mr-2 shrink-0 h-6 px-1 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring text-white dark:text-gray-800 inline-flex items-center shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600"
+                    @click="showEditForm(item)">
+                Edytuj
+            </button>
+            <button
+                    class="mr-2 shrink-0 h-6 px-1 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring text-white dark:text-gray-800 inline-flex items-center shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600"
+                    @click="deleteTreeItem(item)">
+                Usuń
+            </button>
 
             <Tree
-                    v-if="child.children"
-                    :children="child.children"
+                    v-if="item.children"
+                    :children="item.children"
                     @showEditForm="showEditForm"
                     @showCreateForm="showCreateForm"
+                    @deleteTreeItem="deleteTreeItem"
             ></Tree>
         </li>
     </ul>
@@ -22,14 +37,24 @@
 import Tree from "./Tree.vue";
 
 const props = defineProps(['children'])
-const emit = defineEmits(['showCreateForm', 'showEditForm'])
+const emit = defineEmits(['showCreateForm', 'showEditForm', 'deleteTreeItem'])
 
 const showCreateForm = (item) => {
+    if (!item.question_text) {
+        alert('Nie można dodać odpowiedzi ponieważ element nadrzędny nie zawiera pytania');
+
+        return;
+    }
+
     emit('showCreateForm', item)
 }
 
 const showEditForm = (item) => {
     emit('showEditForm', item)
+}
+
+const deleteTreeItem = (item) => {
+    emit('deleteTreeItem', item)
 }
 
 </script>
@@ -86,4 +111,9 @@ ul li::after {
     background-color: #eee;
     top: 12px;
 }
+
+.disabled {
+    cursor: not-allowed;
+}
+
 </style>
