@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\SystemMessageFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|SystemMessage whereUpdatedAt($value)
  * @method static Builder|SystemMessage withTrashed()
  * @method static Builder|SystemMessage withoutTrashed()
+ * @method static SystemMessageFactory factory($count = null, $state = [])
  */
 class SystemMessage extends Model
 {

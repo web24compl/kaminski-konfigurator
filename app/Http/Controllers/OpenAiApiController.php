@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\SalesInformationMail;
 use App\Models\ChatResponse;
+use App\Models\QAndATreeItem;
 use App\Models\Question;
 use App\Models\SystemMessage;
 use Illuminate\Http\Request;
@@ -60,7 +61,7 @@ class OpenAiApiController extends Controller
 
     public function show()
     {
-        $questions = Question::with('answers')->get();
+        $questions = QAndATreeItem::with(['answers', 'parentQuestion'])->get();
 
         return view('layouts.app', ['questions' => $questions]);
     }
