@@ -5,9 +5,9 @@
         "dev": "vite",
         "build": "vite build",
         "build-export": "cd nova-components/Export && npm run dev",
-        "build-export-prod": "cd nova-components/Export && npm run prod",
+        "build-export-prod": "cd nova-components/Export && npm install && npm run prod",
         "build-q-and-a-tree": "cd nova-components/QAndATree && npm run dev",
-        "build-q-and-a-tree-prod": "cd nova-components/QAndATree && npm run prod"
+        "build-q-and-a-tree-prod": "cd nova-components/QAndATree && npm install &&  npm run prod"
     },
     "devDependencies": {
         "axios": "^1.6.4",

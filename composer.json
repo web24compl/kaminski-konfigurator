@@ -22,7 +22,7 @@
         "stepanenko3/nova-json": "^4.0",
         "web24/export": "@dev",
         "ext-zip": "*",
-        "ext-curl": "*"
+        "ext-curl": "*",
         "configurator/q-and-a-tree": "@dev"
     },
     "require-dev": {
