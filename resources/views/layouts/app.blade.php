@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="recaptcha-key" content="{{ config('recaptcha.api_site_key') }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6LdEpHIpAAAAAAPzYkxy4y1RsZYFdzxFvUX3iMnt"></script>
@@ -20,7 +21,6 @@
     @include('partials.footer')
 </body>
 <script defer>
-    window.questions = @json($questions)
-    window.key = @json(config('recaptcha.api_site_key'))
+    window.questions = @json($questions);
 </script>
 </html>
