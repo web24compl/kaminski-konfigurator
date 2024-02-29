@@ -70,7 +70,7 @@
     const nextView = (e) => {
         e.target.disabled = true;
         grecaptcha.enterprise.ready(async () => {
-            const token = await grecaptcha.enterprise.execute('6LdEpHIpAAAAAAPzYkxy4y1RsZYFdzxFvUX3iMnt', {action: 'NEXT_VIEW'});
+            const token = await grecaptcha.enterprise.execute(window.key, {action: 'NEXT_VIEW'});
             axios.post(`/recaptcha`, {
                 token: token,
                 csrf_token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),

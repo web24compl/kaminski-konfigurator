@@ -21,5 +21,6 @@
 </body>
 <script defer>
     window.questions = @json($questions)
+    window.key = @json(config('recaptcha.api_site_key'))
 </script>
 </html>
