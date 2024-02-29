@@ -5,13 +5,13 @@
 <td class="content-cell" align="center">
     <div style="color: #b0adc5; font-size: 12px;margin-bottom: 5px;">Śledź nas w mediach społecznościowych!</div>
     <a target="_blank" href="https://www.facebook.com/kaminskiacademy/">
-        <img width="25px" alt="logo" src="{{ Vite::asset('resources/assets/facebook.png') }}"/></a>
+        <img width="25px" alt="logo" src="{{ asset('assets/facebook.png') }}"/></a>
     <a target="_blank" href="https://www.youtube.com/@kaminskiacademy7962">
-        <img width="25px" alt="logo" src="{{ Vite::asset('resources/assets/youtube.png') }}"/></a>
+        <img width="25px" alt="logo" src="{{ asset('assets/youtube.png') }}"/></a>
     <a target="_blank" href="https://www.linkedin.com/company/kaminskiacademy/">
-        <img width="25px" alt="logo" src="{{ Vite::asset('resources/assets/linkedin.png') }}"/></a>
+        <img width="25px" alt="logo" src="{{ asset('assets/linkedin.png') }}"/></a>
     <a target="_blank" href="https://www.instagram.com/marekkaminskiexplorer/">
-        <img width="25px" alt="logo" src="{{ Vite::asset('resources/assets/instagram.png') }}"/></a>
+        <img width="25px" alt="logo" src="{{ asset('assets/instagram.png') }}"/></a>
 {{ Illuminate\Mail\Markdown::parse($slot) }}
 </td>
 </tr>

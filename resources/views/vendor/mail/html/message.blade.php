@@ -2,7 +2,7 @@
 {{-- Header --}}
 @slot('header')
 @component('mail::header', ['url' => config('app.url')])
-<img src="{{ Vite::asset('resources/assets/logoAcademy.svg') }}" alt="{{ config('app.name') }}" style="max-width:40%;max-height: 100px;"/>
+<img src="{{ asset('assets/logoAcademy.svg') }}" alt="{{ config('app.name') }}" style="max-width:40%;max-height: 100px;"/>
 @endcomponent
 @endslot
 
