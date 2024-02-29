@@ -27,7 +27,6 @@ class QAndAController extends Controller
         $input = $request->validated();
 
         $item = new QAndATreeItem($input);
-
         $item->save();
 
         return response()->json();
@@ -58,15 +57,7 @@ class QAndAController extends Controller
         foreach ($elements as $element) {
             if ($element->parent_question_id === $parentId) {
                 $newElement = $element;
-
-//                [
-//                    'id' => $element->id,
-//                    'question_text' => $element->question_text,
-//                    'answer_text' => $element->answer_text,
-//                    'parent_question' => $element->parentQuestion,
-//                    'is_first_item' => $element->is_first_item,
-//                    'is_last_item' => $element->is_last_item,
-//                ]
+                $newElement['show_input_question_text'] = !empty($element->question_text);
 
                 $children = $this->buildTree($elements, $element->id);
 

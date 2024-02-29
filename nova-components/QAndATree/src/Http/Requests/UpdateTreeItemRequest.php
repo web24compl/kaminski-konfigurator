@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Configurator\QAndATree\Http\Requests;
 
 use App\Models\QAndATreeItem;
+use Configurator\QAndATree\Rules\ItemHesRelatedAnswers;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -16,10 +17,14 @@ class UpdateTreeItemRequest extends FormRequest
             'parent_question_id' => [
                 Rule::requiredIf($this->treeHasFirstItem()),
                 'integer',
-                'exists:App\Models\Housekeeper,id'
+                'exists:App\Models\QAndATreeItem,id'
             ],
-            'question_text' => [Rule::requiredIf(fn() => !request('parent_question_id')), 'nullable', 'string'],
-            'answer_text' => [Rule::requiredIf(fn() => request('parent_question_id')), 'nullable', 'string'],
+            'question_text' => [
+                new ItemHesRelatedAnswers(),
+            ],
+            'answer_text' => [
+                Rule::requiredIf(fn() => request('parent_question_id')),
+            ],
         ];
     }
 
@@ -32,7 +37,6 @@ class UpdateTreeItemRequest extends FormRequest
         ];
     }
 
-
     private function treeHasFirstItem(): bool
     {
         return QAndATreeItem::query()
@@ -40,5 +44,4 @@ class UpdateTreeItemRequest extends FormRequest
             ->whereNot('parent_question_id', request('id'))
             ->exists();
     }
-
 }

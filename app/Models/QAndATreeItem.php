@@ -52,7 +52,6 @@ class QAndATreeItem extends Model
 
     protected $appends = [
         'is_first_item',
-        'is_last_item',
     ];
 
     public function parentQuestion(): BelongsTo
@@ -68,10 +67,5 @@ class QAndATreeItem extends Model
     public function getIsFirstItemAttribute(): bool
     {
         return !$this->parent_question_id;
-    }
-
-    public function getIsLastItemAttribute(): bool
-    {
-        return empty($this->question_text);
     }
 }
