@@ -9,19 +9,18 @@ use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class ParentItemHesQuestion implements ValidationRule, DataAwareRule
+class ItemHesRelatedAnswers implements ValidationRule, DataAwareRule
 {
     protected array $data = [];
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $contains = QAndATreeItem::query()
-            ->whereNotNull('question_text')
-            ->find($this->data['parent_question_id']);
+            ->whereParentQuestionId($this->data['id'])
+            ->exists();
 
-
-        if (!$contains) {
-            $fail('Element nadrzędny musi zawierać pytanie aby móc zdefiniować odpowiedź');
+        if ($contains && empty($value)) {
+            $fail('Element zawiera przypisane odpowiedzi i musi zawierać treść pytania.');
         }
     }
 

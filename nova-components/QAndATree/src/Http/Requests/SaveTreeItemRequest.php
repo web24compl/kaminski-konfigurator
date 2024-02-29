@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Configurator\QAndATree\Http\Requests;
 
 use App\Models\QAndATreeItem;
-use Configurator\QAndATree\Rules\ParentItemHesQuestion;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -19,10 +18,13 @@ class SaveTreeItemRequest extends FormRequest
                 'integer',
                 'exists:App\Models\QAndATreeItem,id'
             ],
-            'question_text' => [Rule::requiredIf(fn() => !request('parent_question_id')), 'nullable', 'string'],
+            'question_text' => [
+                Rule::requiredIf(fn() => !request('parent_question_id')),
+                'nullable',
+                'string'
+            ],
             'answer_text' => [
                 Rule::requiredIf(fn() => request('parent_question_id')),
-                new ParentItemHesQuestion(),
                 'nullable',
                 'string'
             ],
@@ -41,6 +43,8 @@ class SaveTreeItemRequest extends FormRequest
 
     private function treeHasFirstItem(): bool
     {
-        return QAndATreeItem::query()->whereNull('parent_question_id')->exists();
+        return QAndATreeItem::query()
+            ->whereNull('parent_question_id')
+            ->exists();
     }
 }
