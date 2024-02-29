@@ -6,7 +6,8 @@
             <div v-if="!tree || tree.length === 0">
                 <button
                         class="shrink-0 h-9 font-bold px-4 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring text-white dark:text-gray-800 inline-flex items-center shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600"
-                        @click="addFirstItem">Dodaj pierwsze pytanie</button>
+                        @click="addFirstItem">Dodaj pierwsze pytanie
+                </button>
             </div>
 
             <Tree
@@ -37,9 +38,9 @@ import TreeItemPopup from "./TreeItemPopup.vue";
 import axios from 'axios';
 import {onMounted, reactive, ref} from 'vue';
 
-const tree = ref(null);
+let tree = ref(null);
 let showTreeItemPopup = reactive({value: false});
-let errors = reactive({value: false});
+let errors = reactive({value: {}});
 let selectedTreeItem = reactive({});
 
 
@@ -51,15 +52,15 @@ const fetchTree = async () => {
 }
 
 const createTreeItem = async (item) => {
-
     let formData = new FormData();
-    item.question_text && formData.append('question_text', item.question_text);
-    item.answer_text && formData.append('answer_text', item.answer_text);
+    formData.append('question_text', item.question_text ?? '');
+    formData.append('answer_text', item.answer_text ?? '');
     item.parent_question?.id && formData.append('parent_question_id', item.parent_question.id);
+
     await axios.post(`/nova-vendor/q-and-a-tree/tree/`, formData)
         .then((response) => {
-            console.log(response)
             showTreeItemPopup.value = false;
+            errors.value = {};
         }).catch((response) => {
             if (response.response.status === 422) {
                 errors.value = response.response.data.errors
@@ -71,17 +72,21 @@ const createTreeItem = async (item) => {
 
 const updateTreeItem = async (item) => {
     let formData = new FormData();
-    item.question_text && formData.append('question_text', item.question_text);
-    item.answer_text && formData.append('answer_text', item.answer_text);
+    formData.append('question_text', item.question_text ?? '');
+    formData.append('answer_text', item.answer_text ?? '');
+    formData.append('id', item.id);
+    item.parent_question_id && formData.append('parent_question_id', item.parent_question_id);
+
     await axios.post(`/nova-vendor/q-and-a-tree/tree/${item.id}`, formData)
         .then((response) => {
-            console.log(response)
             showTreeItemPopup.value = false;
+            errors.value = {};
         }).catch((response) => {
             if (response.response.status === 422) {
                 errors.value = response.response.data.errors
             }
         });
+
     await fetchTree();
 }
 
@@ -92,9 +97,9 @@ const deleteTreeItem = async (item) => {
     }
 
     await axios.delete(`/nova-vendor/q-and-a-tree/tree/${item.id}`)
-        .then((response) => {
+        .then(() => {
             showTreeItemPopup.value = false;
-            console.log(response)
+            errors.value = {};
         });
 
     await fetchTree();
@@ -128,6 +133,7 @@ const showEditForm = (item) => {
 
 const hideItemTreePopup = () => {
     showTreeItemPopup.value = false;
+    errors.value = {};
 }
 
 onMounted(async () => {
