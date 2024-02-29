@@ -98,7 +98,8 @@
 
         usedQuestions.push(currentQuestionIndex.value);
         answers.push(answer);
-        if (questions[nextIndex].question_text !== '') {
+
+        if (questions[nextIndex].question_text) {
             currentQuestionIndex.value = nextIndex;
         }
         else {
