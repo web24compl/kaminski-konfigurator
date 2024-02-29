@@ -17,6 +17,7 @@
     "vue-loader": "^16.8.3"
   },
   "dependencies": {
+    "laravel-mix": "^6.0.41",
     "axios": "^1.6.7",
     "node-sass": "^9.0.0",
     "sass": "^1.71.1",
