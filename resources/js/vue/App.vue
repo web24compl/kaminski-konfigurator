@@ -70,7 +70,8 @@
     const nextView = (e) => {
         e.target.disabled = true;
         grecaptcha.enterprise.ready(async () => {
-            const token = await grecaptcha.enterprise.execute('6LdEpHIpAAAAAAPzYkxy4y1RsZYFdzxFvUX3iMnt', {action: 'NEXT_VIEW'});
+            const key = document.querySelector('meta[name="recaptcha-key"]').getAttribute('content')
+            const token = await grecaptcha.enterprise.execute(key, {action: 'NEXT_VIEW'});
             axios.post(`/recaptcha`, {
                 token: token,
                 csrf_token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -97,14 +98,13 @@
 
         usedQuestions.push(currentQuestionIndex.value);
         answers.push(answer);
-
-        if (nextIndex !== -1) {
+        if (questions[nextIndex].question_text !== '') {
             currentQuestionIndex.value = nextIndex;
         }
         else {
             finished.value = true;
 
-            let questionsContent = usedQuestions.map((questionIndex) => questions[questionIndex].question);
+            let questionsContent = usedQuestions.map((questionIndex) => questions[questionIndex].question_text);
 
             axios.post(`${window.location.origin}/ai`, {
                 answers: answers,

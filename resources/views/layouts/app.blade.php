@@ -4,9 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="recaptcha-key" content="{{ config('recaptcha.api_site_key') }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LdEpHIpAAAAAAPzYkxy4y1RsZYFdzxFvUX3iMnt"></script>
+    <script src="https://www.google.com/recaptcha/enterprise.js?render={{ config('recaptcha.api_site_key') }}"></script>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Poppins:wght@300;400;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
@@ -20,6 +21,6 @@
     @include('partials.footer')
 </body>
 <script defer>
-    window.questions = @json($questions)
+    window.questions = @json($questions);
 </script>
 </html>
