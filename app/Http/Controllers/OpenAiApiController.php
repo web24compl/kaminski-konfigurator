@@ -27,7 +27,7 @@ class OpenAiApiController extends Controller
             $filteredProducts = Cache::get(self::PRODUCTS_CACHE_KEY);
         }
         else {
-            $url = config('woocommerce.api_url') . '/products?per_page=100';
+            $url = config('woocommerce.api_url') . '/products?per_page=100&status=publish';
             $consumerKey = config('woocommerce.consumer_key');
             $consumerSecret = config('woocommerce.consumer_secret');
 
