@@ -11,7 +11,7 @@
     </div>
     <div class="footer__info">
         <span>WSZELKIE PRAWA ZASTRZEŻONE  © <a href="/">{{config('app.name')}} {{now()->format('Y')}}</a></span>
-        <span class="footer__web24">|  @lang('global.projectAndRealization')
+        <span class="footer__web24">|  PROJEKT I REALIZACJA
             <a href="https://web24.com.pl/" target="_blank">
                 <img src="{{ asset('assets/web24logo.svg') }}" alt="Web24.com.pl">
             </a>
