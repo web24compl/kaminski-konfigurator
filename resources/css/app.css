@@ -49,7 +49,7 @@ header {
 footer {
     width: 100%;
     color: black;
-    border-top: thin solid #707070;
+    border-top: thin solid hsla(0,0%,69%,.3);
     padding: 20px 0;
 }
 
@@ -99,9 +99,8 @@ footer {
 
 .footer__info {
     width: 100%;
-    /*display: flex;*/
     justify-content: center;
-    border-top: thin solid #707070;
+    border-top: thin solid hsla(0,0%,69%,.3);
     font-size: 16px;
     font-weight: 600;
     gap: 15px;
