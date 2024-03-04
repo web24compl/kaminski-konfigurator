@@ -74,6 +74,7 @@ const createTreeItem = async (item) => {
             }
         });
 
+    localStorage.removeItem('questions');
     await fetchTree();
 }
 
@@ -94,6 +95,7 @@ const updateTreeItem = async (item) => {
             }
         });
 
+    localStorage.removeItem('questions');
     await fetchTree();
 }
 
@@ -109,6 +111,7 @@ const deleteTreeItem = async (item) => {
             errors.value = {};
         });
 
+    localStorage.removeItem('questions');
     await fetchTree();
 }
 

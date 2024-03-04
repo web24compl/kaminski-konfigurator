@@ -34,6 +34,7 @@ class QAndAController extends Controller
 
         $item = new QAndATreeItem($input);
         $item->save();
+        Cache::forget('tree');
 
         return response()->json();
     }
@@ -44,6 +45,7 @@ class QAndAController extends Controller
             'question_text' => $request->get('question_text'),
             'answer_text' => $request->get('answer_text'),
         ]);
+        Cache::forget('tree');
 
         return response()->json();
     }
@@ -51,6 +53,7 @@ class QAndAController extends Controller
     public function delete(QAndATreeItem $item): JsonResponse
     {
         $item->delete();
+        Cache::forget('tree');
 
         return response()->json();
     }
