@@ -45,10 +45,17 @@ let selectedTreeItem = reactive({});
 
 
 const fetchTree = async () => {
-    await axios.get(`/nova-vendor/q-and-a-tree/tree`)
-        .then((response) => {
-            tree.value = response.data.tree;
-        });
+
+    if(localStorage.getItem('questions')) {
+        tree.value = JSON.parse(localStorage.getItem('questions'));
+    }
+    else {
+        await axios.get(`/nova-vendor/q-and-a-tree/tree`)
+            .then((response) => {
+                tree.value = response.data.tree;
+                localStorage.setItem('questions', JSON.stringify(tree.value));
+            });
+    }
 }
 
 const createTreeItem = async (item) => {
