@@ -10,12 +10,18 @@ use Configurator\QAndATree\Http\Requests\SaveTreeItemRequest;
 use Configurator\QAndATree\Http\Requests\UpdateTreeItemRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class QAndAController extends Controller
 {
     public function tree(): JsonResponse
     {
-        $tree = QAndATreeItem::query()->with(['answers', 'parentQuestion'])->get()->collect();
+        if(Cache::has('tree'))
+            $tree = Cache::get('tree');
+        else {
+            $tree = QAndATreeItem::query()->with(['answers', 'parentQuestion'])->get()->collect();
+            Cache::put('tree', $tree, 60*60*24*7);
+        }
 
         $buildTree = $this->buildTree($tree);
 

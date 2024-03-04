@@ -17,7 +17,9 @@ class OpenAiApiController extends Controller
 {
     CONST PRODUCTS_CACHE_KEY = 'woocommerce_products';
     CONST PRODUCTS_DIRTY_CACHE_KEY = 'woocommerce_products_dirty';
+    CONST QUESTIONS_CACHE_KEY = 'questions';
     CONST CACHE_DURATION = 60 * 60 * 24;
+    CONST CACHE_DURATION_TREE = 60 * 60 * 24 * 7;
 
     public function getWoocomerceProducts(): array
     {
@@ -68,8 +70,13 @@ class OpenAiApiController extends Controller
 
     public function show()
     {
-        $questions = QAndATreeItem::with(['answers', 'parentQuestion'])->get();
-
+        if(Cache::has(self::QUESTIONS_CACHE_KEY)){
+            $questions = Cache::get(self::QUESTIONS_CACHE_KEY);
+        }
+        else {
+            $questions = QAndATreeItem::with(['answers', 'parentQuestion'])->get();
+            Cache::put(self::QUESTIONS_CACHE_KEY, $questions, self::CACHE_DURATION_TREE);
+        }
         return view('layouts.app', ['questions' => $questions]);
     }
 
