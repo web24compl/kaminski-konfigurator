@@ -39,7 +39,7 @@ class ExportController extends Controller
 
             $zip->close();
 
-            return response()->download($tempZipFilePath, $zipFilename)->deleteFileAfterSend(true);
+            return response()->file($tempZipFilePath)->deleteFileAfterSend(true);
         } else {
             return response()->json(['message' => 'Failed to create zip archive'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

@@ -53,7 +53,7 @@ const submitForm = () => {
         endDate.value = today.value;
     }
 
-    axios.post('/export', { from: startDate.value, to: endDate.value }, { responseType: 'blob' })
+    axios.post('/export', { from: startDate.value, to: endDate.value }, { responseType: 'arraybuffer' })
         .then(response => {
             startDate.value = '';
             endDate.value = '';
@@ -75,6 +75,4 @@ const submitForm = () => {
             console.error('Error exporting chat responses:', error);
         });
 };
-
-console.log('card', card.export);
 </script>
