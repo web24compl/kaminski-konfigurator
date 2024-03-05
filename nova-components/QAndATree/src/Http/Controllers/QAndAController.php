@@ -16,11 +16,11 @@ class QAndAController extends Controller
 {
     public function tree(): JsonResponse
     {
-        if(Cache::has('tree'))
-            $tree = Cache::get('tree');
+        if(Cache::has('questions'))
+            $tree = Cache::get('questions');
         else {
             $tree = QAndATreeItem::query()->with(['answers', 'parentQuestion'])->get()->collect();
-            Cache::put('tree', $tree, 60*60*24*7);
+            Cache::put('questions', $tree, 60*60*24*7);
         }
 
         $buildTree = $this->buildTree($tree);
@@ -34,7 +34,7 @@ class QAndAController extends Controller
 
         $item = new QAndATreeItem($input);
         $item->save();
-        Cache::forget('tree');
+        Cache::forget('questions');
 
         return response()->json();
     }
@@ -45,7 +45,7 @@ class QAndAController extends Controller
             'question_text' => $request->get('question_text'),
             'answer_text' => $request->get('answer_text'),
         ]);
-        Cache::forget('tree');
+        Cache::forget('questions');
 
         return response()->json();
     }
@@ -53,7 +53,7 @@ class QAndAController extends Controller
     public function delete(QAndATreeItem $item): JsonResponse
     {
         $item->delete();
-        Cache::forget('tree');
+        Cache::forget('questions');
 
         return response()->json();
     }
