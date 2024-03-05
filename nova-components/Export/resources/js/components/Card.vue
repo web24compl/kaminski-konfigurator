@@ -45,43 +45,35 @@ watch(endDate, (newEndDate) => {
 });
 
 const submitForm = () => {
-    // If the start date is not set, set it to a very early date
     if (!startDate.value) {
         startDate.value = '1900-01-01';
     }
 
-    // If the end date is not set, set it to today
     if (!endDate.value) {
         endDate.value = today.value;
     }
-    console.log('startDate', startDate.value);
-    console.log('endDate', endDate.value);
+
     axios.post('/export', { from: startDate.value, to: endDate.value }, { responseType: 'blob' })
         .then(response => {
             startDate.value = '';
             endDate.value = '';
 
-            // Create a blob URL for the zip file response
             const url = window.URL.createObjectURL(new Blob([response.data]));
-
-            // Create a link element to trigger the download
             const link = document.createElement('a');
+
             link.href = url;
             link.setAttribute('download', 'chat_responses.zip');
 
-            // Append the link to the document body and trigger the download
             document.body.appendChild(link);
             link.click();
 
-            // Cleanup: Remove the link element
             document.body.removeChild(link);
         })
         .catch(error => {
+            startDate.value = '';
+            endDate.value = '';
             console.error('Error exporting chat responses:', error);
         });
-
-    console.log('startDate', startDate.value);
-    console.log('endDate', endDate.value);
 };
 
 console.log('card', card.export);
