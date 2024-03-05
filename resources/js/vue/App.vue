@@ -47,11 +47,11 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
-import Question from "./Question.vue";
-import axios from "axios";
+    import {ref} from "vue";
+    import Question from "./Question.vue";
+    import axios from "axios";
 
-let view = ref(0);
+    let view = ref(0);
     let email = ref('');
     let consent = ref(false);
     let finished = ref(false);
