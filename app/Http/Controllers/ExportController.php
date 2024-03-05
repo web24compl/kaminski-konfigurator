@@ -29,7 +29,7 @@ class ExportController extends Controller
 
         $tempZipFilePath = storage_path('app/'.$zipFilename);
 
-        if ($zip->open($tempZipFilePath, ZipArchive::CREATE) === TRUE) {
+        if ($zip->open($tempZipFilePath, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE)) {
             foreach ($chatResponses as $response) {
                 $export = new ExportFilteredResponse($response->input, $response->mail, $response->response);
                 $excelFileName = 'odpowiedz_' . $response->created_at . '.csv';
@@ -41,7 +41,7 @@ class ExportController extends Controller
 
             return response()->download($tempZipFilePath, $zipFilename)->deleteFileAfterSend(true);
         } else {
-            return response()->json(['message' => 'Failed to create zip archive'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => $zip->getStatusString()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
