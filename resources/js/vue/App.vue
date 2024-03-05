@@ -78,7 +78,7 @@
             })
                 .then(res => {
                     if (res.data.success) {
-                        const mailRegex = /^(?!.*\.{2})[a-zA-Z0-9]{1}[a-zA-Z0-9._-]+[a-zA-Z0-9]{1}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                        const mailRegex = /^(?!.*\.{2})[a-zA-Z0-9]{1}[a-zA-Z0-9._\-+]+[a-zA-Z0-9]{1}@[a-zA-Z0-9]{1}[a-zA-Z0-9.-]*[a-zA-Z0-9]{1}\.[a-zA-Z]{2,6}$/;
                         if (email.value.match(mailRegex) !== null) {
                             view.value += 1;
                             error.value = '';
