@@ -53,8 +53,9 @@ const submitForm = () => {
         endDate.value = today.value;
     }
 
-    axios.post('/export', { from: startDate.value, to: endDate.value }, { responseType: 'arraybuffer' })
+    axios.post('/export', { from: startDate.value, to: endDate.value }, { responseType: 'blob' })
         .then(response => {
+            console.log('Exported:', response);
             startDate.value = '';
             endDate.value = '';
 
