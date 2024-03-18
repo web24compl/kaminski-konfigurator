@@ -3,9 +3,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 30px;
-    padding: 30px;
-
+    gap: 20px;
+    padding: 20px;
 }
 
 .question {
@@ -19,7 +18,7 @@
     flex-direction: row;
     align-items: center;
     gap: 30px;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
 }
 
 .radio {
@@ -39,6 +38,10 @@
 .radio:checked {
     background-color: var(--primary-color);
     border-color: var(--text-color);
+}
+
+.current__index {
+    margin: 5px;
 }
 
 

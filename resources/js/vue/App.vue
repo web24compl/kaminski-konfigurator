@@ -4,16 +4,20 @@
             <h2>Spróbuj ponownie za jakiś czas.</h2>
         </div>
         <div v-else-if="view === 0" class="app__view">
-                <label for="email" class="flex-column">
-                    Email
-                    <input type="email" v-model="email" class="form__input-text">
-                    <span style="color:red;">{{ error }}</span>
-                </label>
-                <label for="consent">
-                    <input type="checkbox" v-model="consent" id="consent">
-                    Wyrażam zgodę na przetwarzanie moich danych osobowych.
-                </label>
-                <button :class="`button button--large ${email && consent ? '' : 'button--disabled'}`" :disabled="!email || !consent" @click="nextView">Dalej</button>
+            <label for="email" class="flex-column">
+                Email
+                <input type="email" v-model="email" class="form__input-text">
+            </label>
+            <label for="phone" class="flex-column">
+                Telefon
+                <input type="tel" v-model="phone" class="form__input-text">
+            </label>
+            <label for="consent">
+                <input type="checkbox" v-model="consent" id="consent">
+                Wyrażam zgodę na przetwarzanie moich danych osobowych.
+            </label>
+            <span style="color:red;" v-html="error"></span>
+            <button :class="`button button--large ${email && consent ? '' : 'button--disabled'}`" :disabled="!email || !consent" @click="nextView">Dalej</button>
         </div>
         <div v-else-if="view === 1">
             <div>
@@ -47,22 +51,27 @@
 </template>
 
 <script setup>
-    import {ref} from "vue";
+    import {onBeforeUnmount, onMounted, ref, watch} from "vue";
     import Question from "./Question.vue";
     import axios from "axios";
+    import {v4 as uuid } from 'uuid';
 
-    let view = ref(0);
-    let email = ref('');
-    let consent = ref(false);
+    const start = true;
+
+    let view = ref(+localStorage.getItem('view') || 0);
+    let email = ref(localStorage.getItem('email') || '');
+    let phone = ref(localStorage.getItem('phone') || '');
+    let consent = ref(localStorage.getItem('consent') || false);
     let finished = ref(false);
     let error = ref('');
     let failedCaptcha = ref(false);
+    let userUUID = ref(localStorage.getItem('uuid') || uuid());
 
     const questions = window.questions;
 
-    let currentQuestionIndex = ref(0);
-    let usedQuestions = [];
-    let answers = [];
+    let currentQuestionIndex = ref(+localStorage.getItem('currentQuestionIndex') || 0);
+    let usedQuestions = JSON.parse(localStorage.getItem('usedQuestions')) || [];
+    let answers = JSON.parse(localStorage.getItem('answers')) || [];
 
 
     let response = ref({});
@@ -79,11 +88,15 @@
                 .then(res => {
                     if (res.data.success) {
                         const mailRegex = /^(?!.*\.{2})[a-zA-Z0-9]{1}[a-zA-Z0-9._\-+]+[a-zA-Z0-9]{1}@[a-zA-Z0-9]{1}[a-zA-Z0-9.-]*[a-zA-Z0-9]{1}\.[a-zA-Z]{2,6}$/;
-                        if (email.value.match(mailRegex) !== null) {
+                        const phoneRegex = /^[+]*[0-9]*[\s.0-9]*$/;
+
+                        if (email.value.match(mailRegex) !== null && phone.value.match(phoneRegex) !== null) {
                             view.value += 1;
                             error.value = '';
                         } else {
-                            error.value = 'Niepoprawny adres email';
+                            error.value = '';
+                            error.value += email.value.match(mailRegex) === null ? 'Niepoprawny adres email<br/>' : '';
+                            error.value += phone.value.match(phoneRegex) === null ? 'Niepoprawny numer telefonu<br/>' : '';
                             e.target.disabled = false;
                         }
                     }
@@ -112,11 +125,14 @@
                 answers: answers,
                 questions: questionsContent,
                 email: email.value,
+                phone: phone.value,
+                uuid: userUUID.value,
                 csrf_token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             })
                 .then(res => {
                 response.value = res.data;
                 error.value = false;
+                clearLocalStorage();
             })
                 .catch(err => {
                 response.value = {
@@ -129,9 +145,64 @@
         }
 
     };
-    function onClick(e) {
+
+    const sendRequest = (e) => {
         e.preventDefault();
+        e.returnValue = '';
+
+        if(view.value === 1 && start) {
+            setAllLocalStorageItems();
+
+            let questionsContent = usedQuestions.map((questionIndex) => questions[questionIndex].question_text);
+
+            axios.post('/interrupted', {
+                email: email.value,
+                phone: phone.value,
+                answers: answers,
+                questions: questionsContent,
+                csrf_token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            }).then(response => {
+                console.log(response.data);
+            }).catch(error => {
+                console.error(error);
+            });
+        }
     }
+
+    const setAllLocalStorageItems = () => {
+        localStorage.setItem('email', email.value);
+        localStorage.setItem('phone', phone.value);
+        localStorage.setItem('consent', consent.value);
+        localStorage.setItem('usedQuestions', JSON.stringify(usedQuestions));
+        localStorage.setItem('answers', JSON.stringify(answers));
+        localStorage.setItem('view', view.value);
+        localStorage.setItem('currentQuestionIndex', currentQuestionIndex.value);
+        localStorage.setItem('uuid', userUUID.value);
+    }
+
+    const clearLocalStorage = () => {
+        localStorage.removeItem('email');
+        localStorage.removeItem('phone');
+        localStorage.removeItem('consent');
+        localStorage.removeItem('usedQuestions');
+        localStorage.removeItem('answers');
+        localStorage.removeItem('view');
+        localStorage.removeItem('currentQuestionIndex');
+        localStorage.removeItem('uuid');
+    }
+
+    let unwatch = watch(view, (newValue) => {
+        if (newValue === 1) {
+            window.addEventListener('beforeunload', sendRequest);
+        } else {
+            window.removeEventListener('beforeunload', sendRequest);
+        }
+    }, { immediate: true });
+
+    onBeforeUnmount(() => {
+        unwatch();
+    });
+
 
 </script>
 

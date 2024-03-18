@@ -38,7 +38,7 @@ header {
     padding: 10px;
     height: 80px;
     color: var(--text-color);
-    margin-bottom: 50px;
+    margin-bottom: 30px;
     border-bottom: 1px solid hsla(0,0%,69%,.3);
 }
 
@@ -50,7 +50,7 @@ footer {
     width: 100%;
     color: black;
     border-top: thin solid hsla(0,0%,69%,.3);
-    padding: 20px 0;
+    padding: 20px 0 10px 0;
 }
 
 .footer__head {
@@ -59,7 +59,7 @@ footer {
     justify-content: center;
     align-items: center;
     padding: 10px;
-    height: 150px;
+    height: 100px;
 }
 
 .footer__head img {
@@ -149,3 +149,8 @@ footer {
     gap: 10px;
 }
 
+@media (min-width: 1025px) {
+    body {
+        max-height: 100vh;
+    }
+}

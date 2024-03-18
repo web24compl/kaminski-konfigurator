@@ -490,5 +490,6 @@
     "user": "Użytkownika",
     "email": "Mail",
     "mainDashboard": "Panel Główny",
-    "gptSystemMessage": "Wiadomość systemowa"
+    "gptSystemMessage": "Wiadomość systemowa",
+    "phone": "Telefon"
 }

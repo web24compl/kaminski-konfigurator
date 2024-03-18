@@ -20,6 +20,9 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property int|null $tokens
  * @property string|null $mail
+ * @property string|null $phone
+ * @property string|null $uuid
+ * @property string|null $job_id
  * @method static Builder|ChatResponse newModelQuery()
  * @method static Builder|ChatResponse newQuery()
  * @method static Builder|ChatResponse query()
@@ -41,6 +44,9 @@ class ChatResponse extends Model
         'response',
         'tokens',
         'mail',
+        'phone',
+        'uuid',
+        'job_id'
     ];
 
     protected $casts = [

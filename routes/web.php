@@ -23,3 +23,5 @@ Route::post('/ai', [OpenAiApiController::class, 'index']);
 Route::post('/export', [ExportController::class, 'exportChatResponses']);
 
 Route::get('/woocomerce', [OpenAiApiController::class, 'getWoocomerceProducts']);
+
+Route::post('/interrupted', [OpenAiApiController::class, 'interruptedTest']);

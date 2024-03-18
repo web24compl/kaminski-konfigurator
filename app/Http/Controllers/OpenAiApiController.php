@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendInterruptedFormJob;
 use App\Mail\SalesInformationMail;
 use App\Models\ChatResponse;
 use App\Models\QAndATreeItem;
 use App\Models\Question;
 use App\Models\SystemMessage;
+use Carbon\Carbon;
+use Illuminate\Bus\Dispatcher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use OpenAI\Laravel\Facades\OpenAI;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -118,8 +122,10 @@ class OpenAiApiController extends Controller
         }
 
         $email = $request->get('email');
+        $phone = $request->get('phone');
         $questions = $request->get('questions');
         $answers = $request->get('answers');
+        $uuid = $request->get('uuid');
 
         $systemMessages = SystemMessage::all()->pluck('content')->toArray();
         array_push($systemMessages, "Produkty z których wybierasz na podstawie odpowiedzi klienta");
@@ -157,17 +163,52 @@ class OpenAiApiController extends Controller
 
         $product = $this->getProductFromId(json_decode($gptResponse->choices[0]->message->content)->id, $wordpressElements);
 
-        $chatResponse = new ChatResponse();
+        $chatResponse = new ChatResponse(); // TODO przerobić na tworzenie nowego albo aktualizacje po uuid
         $chatResponse->input = $systemMessages;
         $chatResponse->response = json_decode($gptResponse->choices[0]->message->content);
         $chatResponse->tokens = $gptResponse->usage->totalTokens;
         $chatResponse->mail = $email;
+        $chatResponse->phone = $phone;
+        $chatResponse->uuid = $uuid;
         $chatResponse->save();
 
         Mail::to(nova_get_setting('sales_email'))
-            ->send(new SalesInformationMail($email, $chatResponse->input, $chatResponse->response));
+            ->send(new SalesInformationMail($email, $chatResponse->input, $chatResponse->response, $phone));
 
         return response()->json($product, Response::HTTP_OK);
+    }
+
+    public function interruptedTest(Request $request): void
+    {
+        $email = $request->get('email') || 'test@test.pl';
+        $phone = $request->get('phone') || '123456789';
+        $questions = $request->get('questions') ?? ['quest1', 'quest2'];
+        $answers = $request->get('answers') ?? ['answers1', 'answer2'];
+        $uuid = $request->get('uuid') || '12345678-1234-1234-1234-123456789012';
+
+        $messages = [];
+        $questions = $this->setMessageFromArray('assistant', $questions);
+        $answers = $this->setMessageFromArray('user', $answers);
+        for ($i = 0; $i < count($questions); $i++){
+            array_push($messages, $questions[$i]);
+            array_push($messages, $answers[$i]);
+        }
+
+        $delayTime = Carbon::tomorrow()->setTime(8, 0);
+        $job = (new SendInterruptedFormJob($email, $phone, $messages))->delay($delayTime);
+        $jobId = Queue::push($job);
+
+        $chatResponse = new ChatResponse();
+        $chatResponse->input = $messages;
+        $chatResponse->response = [];
+        $chatResponse->tokens = 0;
+        $chatResponse->mail = $email;
+        $chatResponse->phone = $phone;
+        $chatResponse->uuid = $uuid;
+        $chatResponse->job_id = $jobId;
+        $chatResponse->save();
+
+
     }
 
     private function setMessageFromArray(string $role, array $messages): array

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\KeyValue;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -48,8 +49,13 @@ class ChatResponse extends Resource
         return [
             ID::make()->sortable(),
             Text::make(__('email'), 'mail')->sortable(),
-            Code::make(__('gptInput'), 'input')->json(),
-            Code::make(__('gptResponse'), 'response')->json(),
+            Text::make(__('phone'), 'phone'),
+            Text::make(__('gptInput'), function () {
+                return view('partials.json', ['items' => $this->input, 'shortKey' => 'role'])->render();
+            })->asHtml()->hideFromIndex(),
+            Text::make(__('gptResponse'), function () {
+                return view('partials.json', ['items' => [$this->response], 'shortKey' => 'id'])->render();
+            })->asHtml()->hideFromIndex(),
             Number::make(__('tokens'), 'tokens')->sortable(),
             DateTime::make(__('created_at'), 'created_at')->sortable(),
         ];

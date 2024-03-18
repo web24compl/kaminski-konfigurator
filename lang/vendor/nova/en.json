@@ -489,5 +489,6 @@
     "users": "Users",
     "email": "Mail",
     "mainDashboard": "Main",
-    "gptSystemMessage": "System message"
+    "gptSystemMessage": "System message",
+    "phone": "Phone"
 }
