@@ -33,8 +33,8 @@ class ExportFilteredResponse implements FromArray, WithHeadings
                     'mail' => $this->email,
                     'assistant' => '',
                     'user' => '',
-                    'responseItemId' => $this->response['id'],
-                    'responseItemName' => $this->response['name']
+                    'responseItemId' => $this->response[$index]['id'],
+                    'responseItemName' => $this->response[$index]['name']
                 ];
                 $this->emailPrinted = true;
             }
@@ -52,6 +52,14 @@ class ExportFilteredResponse implements FromArray, WithHeadings
                 $index++;
             }
         }
+        foreach ($this->response as $key => $item) {
+            if(!isset($data[$key])) {
+                $data[$key] = ['mail' => '','assistant' => '', 'user' => ''];
+            }
+            $data[$key]['responseItemId'] = $item['id'];
+            $data[$key]['responseItemName'] = $item['name'];
+        }
+
         return $data;
     }
 

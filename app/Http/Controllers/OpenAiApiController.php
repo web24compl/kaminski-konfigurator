@@ -6,14 +6,13 @@ use App\Jobs\SendInterruptedFormJob;
 use App\Mail\SalesInformationMail;
 use App\Models\ChatResponse;
 use App\Models\QAndATreeItem;
-use App\Models\Question;
 use App\Models\SystemMessage;
 use Carbon\Carbon;
-use Illuminate\Bus\Dispatcher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Str;
 use OpenAI\Laravel\Facades\OpenAI;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -46,12 +45,15 @@ class OpenAiApiController extends Controller
             curl_close($ch);
 
             $products = json_decode($response);
-
             $filteredProducts = [];
 
             foreach ($products as $product) {
                 $descriptionConfig = array_reduce($product->meta_data, function($carry, $item) {
                     return $item->key === '_custom_textarea' ? $item->value : $carry;
+                }, null);
+
+                $shortDescription = array_reduce($product->meta_data, function($carry, $item) {
+                    return $item->key === '_custom_short_description' ? $item->value : $carry;
                 }, null);
 
                 $filteredProducts[] = [
@@ -62,6 +64,7 @@ class OpenAiApiController extends Controller
                     'categories' => $product->categories,
                     'description' => str_replace("\n", '', strip_tags($product->description)),
                     'descriptionhtml' => $product->description,
+                    'shortDescription' => nl2br($shortDescription),
                     'image' => $product->images[0]->src,
                     'permalink' => $product->permalink,
                     'descriptionConfig' => $descriptionConfig,
@@ -122,7 +125,7 @@ class OpenAiApiController extends Controller
         }
 
         $email = $request->get('email');
-        $phone = $request->get('phone');
+        $phone = $request->get('phone') ?? 'Brak';
         $questions = $request->get('questions');
         $answers = $request->get('answers');
         $uuid = $request->get('uuid');
@@ -143,7 +146,7 @@ class OpenAiApiController extends Controller
             array_push($systemMessages, $product);
         }
 
-        array_push($systemMessages,'zwróć json id, name');
+        array_push($systemMessages,'zwróć json tablice products z 5 obiektami o kluczach id i name');
 
         $systemMessages = $this->setMessageFromArray('system', $systemMessages);
 
@@ -161,30 +164,38 @@ class OpenAiApiController extends Controller
             'response_format' => ['type' => 'json_object'],
         ]);
 
-        $product = $this->getProductFromId(json_decode($gptResponse->choices[0]->message->content)->id, $wordpressElements);
+        $chatResponse = ChatResponse::where('uuid', $uuid)->exists()
+            ? ChatResponse::where('uuid', $uuid)->first()
+            : new ChatResponse();
 
-        $chatResponse = new ChatResponse(); // TODO przerobić na tworzenie nowego albo aktualizacje po uuid
+        $products = json_decode($gptResponse->choices[0]->message->content)->products;
+        foreach ($products as $key => $product) {
+            $products[$key] = $this->getProductFromId($product->id, $wordpressElements);
+        }
+
         $chatResponse->input = $systemMessages;
-        $chatResponse->response = json_decode($gptResponse->choices[0]->message->content);
+        $chatResponse->response = json_decode($gptResponse->choices[0]->message->content)->products;
         $chatResponse->tokens = $gptResponse->usage->totalTokens;
         $chatResponse->mail = $email;
         $chatResponse->phone = $phone;
         $chatResponse->uuid = $uuid;
+        $chatResponse->job_id = '';
         $chatResponse->save();
 
         Mail::to(nova_get_setting('sales_email'))
             ->send(new SalesInformationMail($email, $chatResponse->input, $chatResponse->response, $phone));
 
-        return response()->json($product, Response::HTTP_OK);
+        return response()->json($products, Response::HTTP_OK);
     }
 
-    public function interruptedTest(Request $request): void
+    public function interruptedTest(Request $request)
     {
-        $email = $request->get('email') || 'test@test.pl';
-        $phone = $request->get('phone') || '123456789';
-        $questions = $request->get('questions') ?? ['quest1', 'quest2'];
-        $answers = $request->get('answers') ?? ['answers1', 'answer2'];
-        $uuid = $request->get('uuid') || '12345678-1234-1234-1234-123456789012';
+        $email = $request->get('email');
+        $phone = $request->get('phone') ?? 'Brak';
+        $questions = $request->get('questions');
+        $answers = $request->get('answers');
+        $uuid = $request->get('uuid');
+        $jobId = Str::random(10);
 
         $messages = [];
         $questions = $this->setMessageFromArray('assistant', $questions);
@@ -194,19 +205,28 @@ class OpenAiApiController extends Controller
             array_push($messages, $answers[$i]);
         }
 
-        $delayTime = Carbon::tomorrow()->setTime(8, 0);
-        $job = (new SendInterruptedFormJob($email, $phone, $messages))->delay($delayTime);
-        $jobId = Queue::push($job);
+//        $delayTime = Carbon::tomorrow()->setTime(8, 0);
+        $delayTime = Carbon::now()->addSeconds(30);
+        $job = (new SendInterruptedFormJob($email, $messages, $phone, $uuid, $jobId));
+        Queue::later($delayTime,$job);
 
-        $chatResponse = new ChatResponse();
-        $chatResponse->input = $messages;
-        $chatResponse->response = [];
-        $chatResponse->tokens = 0;
-        $chatResponse->mail = $email;
-        $chatResponse->phone = $phone;
-        $chatResponse->uuid = $uuid;
-        $chatResponse->job_id = $jobId;
-        $chatResponse->save();
+        if(ChatResponse::where('uuid', $uuid)->exists()){
+            $chatResponse = ChatResponse::where('uuid', $uuid)->first();
+            $chatResponse->input = $messages;
+            $chatResponse->job_id = $jobId;
+            $chatResponse->save();
+        }
+        else {
+            $chatResponse = new ChatResponse();
+            $chatResponse->input = $messages;
+            $chatResponse->response = [];
+            $chatResponse->tokens = 0;
+            $chatResponse->mail = $email;
+            $chatResponse->phone = $phone;
+            $chatResponse->uuid = $uuid;
+            $chatResponse->job_id = $jobId;
+            $chatResponse->save();
+        }
 
 
     }

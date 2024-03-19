@@ -19,7 +19,7 @@
             <span style="color:red;" v-html="error"></span>
             <button :class="`button button--large ${email && consent ? '' : 'button--disabled'}`" :disabled="!email || !consent" @click="nextView">Dalej</button>
         </div>
-        <div v-else-if="view === 1">
+        <div v-else-if="view === 1 && !error">
             <div>
                 <p class="current__index">Pytanie {{ usedQuestions.length + 1 }}</p>
             </div>
@@ -29,23 +29,28 @@
             <div v-if="Object.keys(response).length === 0">
                 <h2>Trwa wyszukiwanie odpowiedniego produktu</h2>
             </div>
-            <div v-else class="product">
+            <div v-else>
                 <h2>
-                    Sugerowany produkt:
+                    Sugerowane produkty:
                 </h2>
-                <div class="product__image">
-                    <img :src="response.image" alt="product">
+                <div class="products">
+                    <div class="product" v-for="item in response">
+                        <div class="product__image">
+                            <img :src="item.image" alt="product">
+                        </div>
+                        <div class="product__info">
+                            <h2>{{ item.name }}</h2>
+                            <h3>{{ item.price }} PLN</h3>
+                            <p v-html="item.shortDescription !== '' ? item.shortDescription : item.descriptionhtml.split(' ').slice(0,25).join(' ') + '...'"></p>
+                            <a :href="item.permalink" class="button button--large" target="_blank">Zobacz produkt</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="product__info">
-                    <h2>{{ response.name }}</h2>
-                    <h3>{{ response.price }} PLN</h3>
-                    <p v-html="response.descriptionhtml"></p>
-                    <a :href="response.permalink" class="button button--large" target="_blank">Zobacz produkt</a>
-                </div>
+
             </div>
         </div>
         <div v-else>
-            <h2>Wystąpił błąd</h2>
+            <h2>{{response.data}}</h2>
         </div>
     </div>
 </template>
@@ -113,7 +118,17 @@
         usedQuestions.push(currentQuestionIndex.value);
         answers.push(answer);
 
+        console.log(questions[nextIndex])
         if (questions[nextIndex].question_text) {
+            if (questions[nextIndex].answers.length === 0) {
+                error.value = true;
+                response.value = {
+                    data: "Brak odpowiedzi do pytania odśwież stronę i spróbuj ponownie"
+                }
+                sendRequest();
+                clearLocalStorage();
+                view.value = 999;
+            }
             currentQuestionIndex.value = nextIndex;
         }
         else {
@@ -146,26 +161,37 @@
 
     };
 
-    const sendRequest = (e) => {
-        e.preventDefault();
-        e.returnValue = '';
+    const sendRequest = (e = null) => {
+        if(e !== null) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
 
-        if(view.value === 1 && start) {
+        if(view.value === 1 && start) {//TODO po testach usunąc start
             setAllLocalStorageItems();
 
             let questionsContent = usedQuestions.map((questionIndex) => questions[questionIndex].question_text);
+
+            if(error.value) {
+                questionsContent.push('Brak odpowiedzi do pytania');
+                answers.push('');
+            }
 
             axios.post('/interrupted', {
                 email: email.value,
                 phone: phone.value,
                 answers: answers,
                 questions: questionsContent,
+                uuid: userUUID.value,
                 csrf_token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             }).then(response => {
                 console.log(response.data);
             }).catch(error => {
                 console.error(error);
             });
+        }
+        else {
+            clearLocalStorage();
         }
     }
 

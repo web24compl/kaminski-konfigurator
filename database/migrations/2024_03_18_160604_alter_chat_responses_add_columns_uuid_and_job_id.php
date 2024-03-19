@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('chat_responses', function (Blueprint $table) {
             $table->string('uuid')->nullable();
-            $table->unsignedInteger('job_id')->nullable();
+            $table->string('job_id')->nullable();
         });
     }
 

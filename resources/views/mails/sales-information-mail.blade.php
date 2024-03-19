@@ -1,7 +1,7 @@
 @component('mail::message')
     Ktoś wypełnił ankietę<br/><br/>
-    Mail: {{ $email }}
-    Telefon: {{ $phone }}
+    Mail: {{ $email }}<br/>
+    Telefon: {{ $phone }}<br/>
 
-    Zaproponowany produkt: {{ $id }} - {{ $name }}
+
 @endcomponent

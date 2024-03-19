@@ -17,8 +17,6 @@ class SalesInformationMail extends Mailable
      */
     public function __construct(protected string $email, protected $input, protected $gptResponse, protected string $phone)
     {
-        $this->name = $this->gptResponse['name'];
-        $this->id = $this->gptResponse['id'];
     }
 
     /**
@@ -29,8 +27,6 @@ class SalesInformationMail extends Mailable
         return $this
             ->markdown('mails.sales-information-mail', [
                 'email' => $this->email,
-                'name' => $this->name,
-                'id' => $this->id,
                 'phone' => $this->phone,
             ])
             ->subject('Informacje o sprzedaży')
