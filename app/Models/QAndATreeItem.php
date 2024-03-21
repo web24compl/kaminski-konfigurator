@@ -47,7 +47,8 @@ class QAndATreeItem extends Model
     protected $fillable = [
         'question_text',
         'answer_text',
-        'parent_question_id'
+        'parent_question_id',
+        'multiple_answers',
     ];
 
     protected $appends = [

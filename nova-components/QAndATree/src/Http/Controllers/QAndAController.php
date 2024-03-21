@@ -44,6 +44,7 @@ class QAndAController extends Controller
         $item->update([
             'question_text' => $request->get('question_text'),
             'answer_text' => $request->get('answer_text'),
+            'multiple_answers' => $request->get('multiple_answers') === 'true',
         ]);
         Cache::forget('questions');
 

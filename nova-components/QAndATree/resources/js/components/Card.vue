@@ -22,6 +22,7 @@
                 :is-open="showTreeItemPopup.value"
                 :errors="errors.value"
                 :selected-tree-item="selectedTreeItem"
+                :multiple-answers="!!selectedTreeItem.multiple_answers"
                 @hideItemTreePopup="hideItemTreePopup"
                 @deleteTreeItem="deleteTreeItem"
                 @updateTreeItem="updateTreeItem"
@@ -62,6 +63,7 @@ const createTreeItem = async (item) => {
     let formData = new FormData();
     formData.append('question_text', item.question_text ?? '');
     formData.append('answer_text', item.answer_text ?? '');
+    formData.append('multiple_answers', !!item.multiple_answers ?? false);
     item.parent_question?.id && formData.append('parent_question_id', item.parent_question.id);
 
     await axios.post(`/nova-vendor/q-and-a-tree/tree/`, formData)
@@ -83,6 +85,7 @@ const updateTreeItem = async (item) => {
     formData.append('question_text', item.question_text ?? '');
     formData.append('answer_text', item.answer_text ?? '');
     formData.append('id', item.id);
+    formData.append('multiple_answers', !!item.multiple_answers ?? false);
     item.parent_question_id && formData.append('parent_question_id', item.parent_question_id);
 
     await axios.post(`/nova-vendor/q-and-a-tree/tree/${item.id}`, formData)
@@ -116,10 +119,12 @@ const deleteTreeItem = async (item) => {
 }
 
 const showCreateForm = (item) => {
+    console.log(item)
     selectedTreeItem = {
         question_text: '',
         answer_text: '',
         parent_question: item,
+        multiple_answers: false,
     }
 
     showTreeItemPopup.value = true;
@@ -131,12 +136,14 @@ const addFirstItem = () => {
         question_text: '',
         answer_text: '',
         parent_question: null,
+        multiple_answers: false,
     }
 
     showTreeItemPopup.value = true;
 }
 
 const showEditForm = (item) => {
+    console.log(item)
     selectedTreeItem = item
     showTreeItemPopup.value = true;
 }
