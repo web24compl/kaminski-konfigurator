@@ -43,7 +43,7 @@
 
                     <p class="mb-2">
                         <input type="checkbox" id="multiple_answers" name="multiple_answers" class="mr-2"
-                               v-model="multipleAnswers">
+                               v-model="treeItem.multiple_answers">
                         <label for="multiple_answers">Pytanie z wieloma odpowiedziami</label>
                     </p>
 
@@ -78,19 +78,14 @@ import FormRow from "./FormRow.vue";
 
 import {ref, watch} from "vue";
 
-const props = defineProps(['isOpen', 'selectedTreeItem', 'errors', 'multipleAnswers']);
-let treeItem = ref(props.selectedTreeItem.value);
-let multipleAnswers = ref(props.multipleAnswers);
+const props = defineProps(['isOpen', 'selectedTreeItem', 'errors']);
+const treeItem = ref(props.selectedTreeItem);
 
 watch(() => props.selectedTreeItem, () => {
-    treeItem = ref(props.selectedTreeItem);
-    multipleAnswers = ref(props.multipleAnswers);
-    console.log('watch treeItem', props.multipleAnswers, multipleAnswers);
-})
+    treeItem.value = props.selectedTreeItem;
+    treeItem.value.multiple_answers = !!treeItem.value.multiple_answers;
+}, {deep: true});
 
-watch(() => multipleAnswers, () => {
-    treeItem.multiple_answers = multipleAnswers.value;
-})
 </script>
 
 

@@ -41,7 +41,7 @@
                         <div class="product__info">
                             <h2>{{ item.name }}</h2>
                             <h3>{{ item.price }} PLN</h3>
-                            <p v-html="item.shortDescription !== '' ? item.shortDescription : item.descriptionhtml.split(' ').slice(0,25).join(' ') + '...'"></p>
+                            <p style="" v-html="item.shortDescription !== '' ? item.shortDescription : item.descriptionhtml.split(' ').slice(0,15).join(' ') + '...'"></p>
                             <a :href="item.permalink" class="button button--large" target="_blank">Zobacz produkt</a>
                         </div>
                     </div>

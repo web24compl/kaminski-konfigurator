@@ -22,7 +22,6 @@
                 :is-open="showTreeItemPopup.value"
                 :errors="errors.value"
                 :selected-tree-item="selectedTreeItem"
-                :multiple-answers="!!selectedTreeItem.multiple_answers"
                 @hideItemTreePopup="hideItemTreePopup"
                 @deleteTreeItem="deleteTreeItem"
                 @updateTreeItem="updateTreeItem"

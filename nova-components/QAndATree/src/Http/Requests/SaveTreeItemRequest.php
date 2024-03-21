@@ -28,7 +28,7 @@ class SaveTreeItemRequest extends FormRequest
                 'nullable',
                 'string'
             ],
-            'multiple_answers' => 'nullable|boolean',
+            'multiple_answers' => ['nullable'],
         ];
     }
 

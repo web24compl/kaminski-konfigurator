@@ -25,6 +25,7 @@ class UpdateTreeItemRequest extends FormRequest
             'answer_text' => [
                 Rule::requiredIf(fn() => request('parent_question_id')),
             ],
+            'multiple_answers' => ['nullable'],
         ];
     }
 
