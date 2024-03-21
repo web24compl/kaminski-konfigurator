@@ -68,8 +68,7 @@
 
     const start = true;
 
-    let view = ref(QUESTION_VIEW);
-    // let view = ref(+localStorage.getItem('view') || USER_VIEW);
+    let view = ref(+localStorage.getItem('view') || USER_VIEW);
     let email = ref(localStorage.getItem('email') || '');
     let phone = ref(localStorage.getItem('phone') || '');
     let consent = ref(localStorage.getItem('consent') || false);
