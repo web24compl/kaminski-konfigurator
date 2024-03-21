@@ -3,7 +3,7 @@
         <div v-if="failedCaptcha">
             <h2>Spróbuj ponownie za jakiś czas.</h2>
         </div>
-        <div v-else-if="view === 0" class="app__view">
+        <div v-else-if="view === USER_VIEW" class="app__view">
             <label for="email" class="flex-column">
                 Email
                 <input type="email" v-model="email" class="form__input-text">
@@ -19,13 +19,13 @@
             <span style="color:red;" v-html="error"></span>
             <button :class="`button button--large ${email && consent ? '' : 'button--disabled'}`" :disabled="!email || !consent" @click="nextView">Dalej</button>
         </div>
-        <div v-else-if="view === 1 && !error">
+        <div v-else-if="view === QUESTION_VIEW && !error">
             <div>
                 <p class="current__index">Pytanie {{ usedQuestions.length + 1 }}</p>
             </div>
             <Question :question="questions[currentQuestionIndex]" @nextQuestion="nextQuestion"/>
         </div>
-        <div v-else-if="view === 2 && !error">
+        <div v-else-if="view === RESULT_VIEW && !error">
             <div v-if="Object.keys(response).length === 0">
                 <h2>Trwa wyszukiwanie odpowiedniego produktu</h2>
             </div>
@@ -61,9 +61,15 @@
     import axios from "axios";
     import {v4 as uuid } from 'uuid';
 
+    const USER_VIEW = 0;
+    const QUESTION_VIEW = 1;
+    const RESULT_VIEW = 2;
+    const ERROR_VIEW = 999;
+
     const start = true;
 
-    let view = ref(+localStorage.getItem('view') || 0);
+    let view = ref(QUESTION_VIEW);
+    // let view = ref(+localStorage.getItem('view') || USER_VIEW);
     let email = ref(localStorage.getItem('email') || '');
     let phone = ref(localStorage.getItem('phone') || '');
     let consent = ref(localStorage.getItem('consent') || false);
@@ -96,7 +102,7 @@
                         const phoneRegex = /^[+]*[0-9]*[\s.0-9]*$/;
 
                         if (email.value.match(mailRegex) !== null && phone.value.match(phoneRegex) !== null) {
-                            view.value += 1;
+                            view.value = QUESTION_VIEW;
                             error.value = '';
                         } else {
                             error.value = '';
@@ -113,12 +119,12 @@
     }
 
     const nextQuestion = (questionId, answer) => {
-        const nextIndex = questions.findIndex(question => question.id === questionId);
+        const nextIndex = questions.findIndex(question => question.id === questionId.value);
 
         usedQuestions.push(currentQuestionIndex.value);
         answers.push(answer);
 
-        console.log(questions[nextIndex])
+        console.log(usedQuestions, '---|--- answers', answers,'---|--- questionId', questionId.value,'---|---answer', answer,'---|---next index', nextIndex,'---|--- questions', questions)
         if (questions[nextIndex].question_text) {
             if (questions[nextIndex].answers.length === 0) {
                 error.value = true;
@@ -127,7 +133,7 @@
                 }
                 sendRequest();
                 clearLocalStorage();
-                view.value = 999;
+                view.value = ERROR_VIEW;
             }
             currentQuestionIndex.value = nextIndex;
         }
@@ -156,7 +162,7 @@
                 error.value = true;
             });
 
-            view.value += 1;
+            view.value = RESULT_VIEW;
         }
 
     };
@@ -167,7 +173,7 @@
             e.returnValue = '';
         }
 
-        if(view.value === 1 && start) {//TODO po testach usunąc start
+        if(view.value === QUESTION_VIEW && start) {//TODO po testach usunąc start
             setAllLocalStorageItems();
 
             let questionsContent = usedQuestions.map((questionIndex) => questions[questionIndex].question_text);
