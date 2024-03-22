@@ -12,10 +12,6 @@
                     :name="question.question_text"
                     @change="check($event, answer.id, answer.answer_text)"
                 >
-                <!--
-                    :checked="selectedAnswers.includes(answer.answer_text)"
-                    v-model="answer.answer_text"
-                -->
                 <label :for="answer.id">{{ answer.answer_text }}</label>
             </div>
             <button :disabled="!checked"
@@ -46,25 +42,21 @@ console.log('start', selectedAnswers, selectedAnswerQuestionId.value)
             if (e.target.checked) {
                 selectedAnswers = reactive([...selectedAnswers, text])
                 selectedAnswerQuestionId.value = props.question.answers[0].id;
-                console.log('multiple add', selectedAnswers)
             } else {
                 const index = selectedAnswers.indexOf(text);
                 if (index !== -1) {
                     selectedAnswers.splice(index, 1);
                     checked.value = false;
                 }
-                console.log('multiple remove', selectedAnswers)
             }
         } else {
             selectedAnswers = reactive([text]);
             selectedAnswerQuestionId.value = answer_id;
-            console.log('single', answer_id, selectedAnswers, selectedAnswerQuestionId.value)
         }
 
         if (selectedAnswers.length === 0) {
             selectedAnswerQuestionId.value = null;
         }
-        console.log('end', selectedAnswers, selectedAnswerQuestionId.value, props.question.answers)
     }
 
     const reset = () => {

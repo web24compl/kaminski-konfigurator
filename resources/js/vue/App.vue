@@ -123,7 +123,6 @@
         usedQuestions.push(currentQuestionIndex.value);
         answers.push(answer);
 
-        console.log(usedQuestions, '---|--- answers', answers,'---|--- questionId', questionId.value,'---|---answer', answer,'---|---next index', nextIndex,'---|--- questions', questions)
         if (questions[nextIndex].question_text) {
             if (questions[nextIndex].answers.length === 0) {
                 error.value = true;

@@ -205,8 +205,7 @@ class OpenAiApiController extends Controller
             array_push($messages, $answers[$i]);
         }
 
-//        $delayTime = Carbon::tomorrow()->setTime(8, 0);
-        $delayTime = Carbon::now()->addSeconds(30);
+        $delayTime = Carbon::tomorrow()->setTime(8, 0);
         $job = (new SendInterruptedFormJob($email, $messages, $phone, $uuid, $jobId));
         Queue::later($delayTime,$job);
 
