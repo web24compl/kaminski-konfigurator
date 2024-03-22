@@ -54,6 +54,9 @@ class ChatResponse extends Resource
                 return view('partials.json', ['items' => $this->input, 'shortKey' => 'role'])->render();
             })->asHtml()->hideFromIndex(),
             Text::make(__('gptResponse'), function () {
+                if ($this->response === []){
+                    return 'Brak odpowiedzi';
+                }
                 return view('partials.json', ['items' => $this->response, 'shortKey' => 'id'])->render();
             })->asHtml()->hideFromIndex(),
             Number::make(__('tokens'), 'tokens')->sortable(),
